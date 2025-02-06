@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -102,7 +103,7 @@ fun BottomNavigationBar(navController: NavController) {
         ),
         BottomNavigationItem(
             title = "Budget List",
-            icon = Icons.Default.List,
+            icon = Icons.Default.Menu,
             route = Screen.BudgetList.route
         ),
         BottomNavigationItem(
