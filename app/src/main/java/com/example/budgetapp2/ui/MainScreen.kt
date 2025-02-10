@@ -39,11 +39,8 @@ fun MainScreen() {
             composable(Screen.Home.route) { HomeScreen() }
             composable(Screen.BudgetList.route) { BudgetListScreen() }
             composable(Screen.Settings.route) { SettingsScreen() }
-
         }
-
     }
-
 }
 
 data class BottomNavigationItem(
@@ -81,11 +78,9 @@ fun BottomNavigationBar(navController: NavController) {
             route = Screen.Settings.route
         )
     )
-
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.title) },
