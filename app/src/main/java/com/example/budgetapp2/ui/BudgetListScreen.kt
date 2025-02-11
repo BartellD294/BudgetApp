@@ -27,6 +27,16 @@ import com.example.budgetapp2.ui.theme.BudgetApp2Theme
 import java.text.NumberFormat
 
 @Composable
+fun SectionsList(sectionsList: List<List<BudgetItem>>) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        for (i in sectionsList.indices) {
+            ExpandableSection(sectionsList[i], sectionsList[i][0].category)
+        }
+    }
+    //ExpandableSection(sectionsList[0], "Expenses")
+}
+
+@Composable
 fun ExpandableHeader(text: String, clickEffect: () -> Unit, open: Boolean) {
     Row(modifier = Modifier
         .clickable { clickEffect() }
@@ -60,14 +70,14 @@ fun ExpandableHeader(text: String, clickEffect: () -> Unit, open: Boolean) {
 }
 
 @Composable
-fun ExpandableSection(ItemsList: List<BudgetItem>) {
+fun ExpandableSection(itemsList: List<BudgetItem>, headerName: String = "Expenses") {
     var isOpen by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
     ) {
-        ExpandableHeader("Expenses", { isOpen = !isOpen }, isOpen)
+        ExpandableHeader(headerName, { isOpen = !isOpen }, isOpen)
         if (isOpen) {
-            BudgetList(ItemsList)
+            BudgetList(itemsList)
         }
     }
 
@@ -115,7 +125,8 @@ fun BudgetList(
 
 @Composable
 fun BudgetListScreen() {
-    ExpandableSection(tempBudgetItems)
+    val categoryList = listOf(tempBudgetItems)
+    SectionsList(categoryList)
 }
 
 @Preview(showBackground = true)
