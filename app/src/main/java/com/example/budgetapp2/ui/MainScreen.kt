@@ -26,11 +26,33 @@ import com.example.budgetapp2.ui.theme.BudgetApp2Theme
 
 @Composable
 fun MainScreen() {
+
     val navController = rememberNavController()
+
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = {
+            BottomNavigationBar(
+                navController, listOf(
+                    BottomNavigationItem(
+                        title = "Home",
+                        icon = Icons.Default.Home,
+                        route = Screen.Home.route
+                    ),
+                    BottomNavigationItem(
+                        title = "Budget List",
+                        icon = Icons.Default.Menu,
+                        route = Screen.BudgetList.route
+                    ),
+                    BottomNavigationItem(
+                        title = "Settings",
+                        icon = Icons.Default.Settings,
+                        route = Screen.Settings.route
+                    )
+                )
+            )
+        }
     ) {
-            innerPadding ->
+        innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Screen.Home.route,
@@ -60,24 +82,10 @@ fun SettingsScreen() {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    val items = listOf(
-        BottomNavigationItem(
-            title = "Home",
-            icon = Icons.Default.Home,
-            route = Screen.Home.route
-        ),
-        BottomNavigationItem(
-            title = "Budget List",
-            icon = Icons.Default.Menu,
-            route = Screen.BudgetList.route
-        ),
-        BottomNavigationItem(
-            title = "Settings",
-            icon = Icons.Default.Settings,
-            route = Screen.Settings.route
-        )
-    )
+fun BottomNavigationBar(
+    navController: NavController,
+    items: List<BottomNavigationItem>
+) {
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
