@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.budgetapp2.ui.MainScreen
+import com.example.budgetapp2.ui.NavScreen
 import com.example.budgetapp2.ui.theme.BudgetApp2Theme
 
 
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BudgetApp2Theme {
-                MainScreen()
+                NavScreen()
             }
         }
     }

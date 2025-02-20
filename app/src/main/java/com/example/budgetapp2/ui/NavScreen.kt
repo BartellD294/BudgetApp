@@ -25,7 +25,7 @@ import com.example.budgetapp2.Screen
 import com.example.budgetapp2.ui.theme.BudgetApp2Theme
 
 @Composable
-fun MainScreen() {
+fun NavScreen() {
 
     val navController = rememberNavController()
 
@@ -72,16 +72,6 @@ data class BottomNavigationItem(
 )
 
 @Composable
-fun HomeScreen() {
-    Text(text = "Home")
-}
-
-@Composable
-fun SettingsScreen() {
-    Text(text = "Settings")
-}
-
-@Composable
 fun BottomNavigationBar(
     navController: NavController,
     items: List<BottomNavigationItem>
@@ -113,6 +103,6 @@ fun BottomNavigationBar(
 @Composable
 fun GreetingPreview() {
     BudgetApp2Theme {
-        MainScreen()
+        NavScreen()
     }
 }
