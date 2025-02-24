@@ -5,11 +5,28 @@ import android.content.Context
 import android.app.Application
 import android.view.View
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.budgetapp2.data.BudgetDatabase
+import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.BudgetItemsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-class BudgetListViewModel {
-    init {
-        val dao = BudgetDatabase.getDatabase(application).budgetItemDao()
-    }
+class BudgetListViewModel(
+    repository: BudgetItemsRepository
+): ViewModel() {
+    val budgetListUiState: StateFlow<BudgetListUiState> =
+        repository.getAllItemsStream().map { BudgetListUiState(it) }
+            .stateIn(
+                scope= viewModelScope,
+                started=SharingStarted.WhileSubscribed(5_000L),
+                initialValue=BudgetListUiState()
+            )
 }
+
+
+data class BudgetListUiState(val budgetItemList: List<BudgetItem> = listOf())
