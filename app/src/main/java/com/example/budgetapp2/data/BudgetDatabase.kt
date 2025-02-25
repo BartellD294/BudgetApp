@@ -7,16 +7,21 @@ import androidx.room.RoomDatabase
 
 @Database(entities= [BudgetItem::class], version=1, exportSchema = false)
 abstract class BudgetDatabase : RoomDatabase() {
+
     abstract fun budgetItemDao(): BudgetItemDao
+
     companion object {
         @Volatile
         private var Instance: BudgetDatabase? = null
+
         fun getDatabase(context: Context): BudgetDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, BudgetDatabase::class.java, "budget_item_database")
+                    .fallbackToDestructiveMigration()
                     .build()
-                    .also { Instance = it }}
+                    .also { Instance = it }
             }
+        }
     }
 
 }

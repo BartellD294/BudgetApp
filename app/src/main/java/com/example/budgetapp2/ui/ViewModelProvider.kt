@@ -12,7 +12,7 @@ object ViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             BudgetListViewModel(
-                budgetApplication().container.itemsRepository
+                budgetApplication().container.repository
             )
         }
     }

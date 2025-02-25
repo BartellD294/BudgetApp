@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.amountToCurrency
-import com.example.budgetapp2.data.tempBudgetItems
 import com.example.budgetapp2.ui.theme.BudgetApp2Theme
-import java.text.NumberFormat
+
+@Composable
+fun BudgetListScreen(
+    budgetListViewModel: BudgetListViewModel = viewModel(factory = ViewModelProvider.Factory)
+) {
+    val budgetListUiState by budgetListViewModel.budgetListUiState.collectAsState()
+    SectionsList(budgetListUiState.budgetItemList.groupBy { it.category }.values.toList())
+}
 
 @Composable
 fun SectionsList(sectionsList: List<List<BudgetItem>>) {
@@ -126,13 +130,7 @@ fun BudgetList(
     }
 }
 
-@Composable
-fun BudgetListScreen(
-    budgetListViewModel: BudgetListViewModel = viewModel(factory = ViewModelProvider.Factory)
-) {
-    val budgetListUiState by budgetListViewModel.budgetListUiState.collectAsState()
-    SectionsList(budgetListUiState.budgetItemList.groupBy { it.category }.values.toList())
-}
+
 
 @Preview(showBackground = true)
 @Composable
