@@ -2,6 +2,7 @@ package com.example.budgetapp2.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
@@ -44,6 +45,11 @@ fun NavScreen() {
                         route = Screen.BudgetList.route
                     ),
                     BottomNavigationItem(
+                        title = "Add Item",
+                        icon = Icons.Default.Add,
+                        route = Screen.AddItem.route
+                    ),
+                    BottomNavigationItem(
                         title = "Settings",
                         icon = Icons.Default.Settings,
                         route = Screen.Settings.route
@@ -58,9 +64,18 @@ fun NavScreen() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.BudgetList.route) { BudgetListScreen() }
-            composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.Home.route) {
+                HomeScreen()
+            }
+            composable(Screen.BudgetList.route) {
+                BudgetListScreen()
+            }
+            composable(Screen.AddItem.route) {
+                AddItemScreen(popBackStack = { navController.popBackStack() })
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen()
+            }
         }
     }
 }

@@ -15,6 +15,11 @@ object ViewModelProvider {
                 budgetApplication().container.repository
             )
         }
+        initializer {
+            AddItemViewModel(
+                budgetApplication().container.repository
+            )
+        }
     }
 }
 

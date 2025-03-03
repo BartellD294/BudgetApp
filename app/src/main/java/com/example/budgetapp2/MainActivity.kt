@@ -11,6 +11,7 @@ import com.example.budgetapp2.ui.theme.BudgetApp2Theme
 sealed class Screen(val route: String, val title: String) {
     object Home: Screen("home", "Home")
     object BudgetList: Screen("budgetList", "Budget List")
+    object AddItem: Screen("addItem", "Add Item")
     object Settings: Screen("settings", "Settings")
 }
 
