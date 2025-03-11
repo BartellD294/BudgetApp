@@ -11,6 +11,7 @@ data class BudgetItem(
     val name: String,
     val amount: Double,
     val category: String,
+    val frequency: Int,
     val date: String
 )
 
@@ -18,6 +19,7 @@ public fun amountToCurrency(amount: Double): String {
     return NumberFormat.getCurrencyInstance(Locale.US).format(amount)
 }
 
+/*
 public var tempBudgetItems = mutableListOf(
     BudgetItem(1, "Groceries", 50.0, "Food", "2023-04-01"),
     BudgetItem(2, "Gas", 20.0, "Transportation", "2023-04-02"),
@@ -38,3 +40,4 @@ public var tempBudgetItems = mutableListOf(
 
 
 )
+ */

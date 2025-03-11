@@ -28,8 +28,13 @@ class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository)
         expenseUiState = expenseUiState.copy(cost = cost)
     }
 
+    fun updateFrequency(frequency: Int) {
+        expenseUiState = expenseUiState.copy(frequency = frequency)
+    }
+
     suspend fun enterExpense() {
         val newExpense = expenseUiState.toExpense()
+
         budgetItemsRepository.insertExpense(newExpense)
     }
 }
@@ -39,12 +44,14 @@ data class ExpenseUiState(
     val name: String = "",
     val category: String = "",
     val cost: String = "",
+    val frequency: Int = 0
 )
 
 fun ExpenseUiState.toExpense(): BudgetItem = BudgetItem(
     id = id,
     name = name,
     category = category,
-    amount = cost.toDoubleOrNull() ?: 0.0,
+    amount = (cost.toDoubleOrNull()) ?: 0.0,
+    frequency = frequency,
     date = ""
 )

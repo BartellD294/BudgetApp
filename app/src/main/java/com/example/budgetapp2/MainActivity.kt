@@ -18,6 +18,7 @@ sealed class Screen(val route: String, val title: String) {
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        //this.deleteDatabase("budget_item_database")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
