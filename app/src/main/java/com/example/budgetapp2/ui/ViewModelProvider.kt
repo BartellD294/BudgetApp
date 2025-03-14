@@ -20,6 +20,11 @@ object ViewModelProvider {
                 budgetApplication().container.repository
             )
         }
+        initializer {
+            SettingsViewModel(
+                budgetApplication().container.repository
+            )
+        }
     }
 }
 

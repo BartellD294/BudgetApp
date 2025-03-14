@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:name=".BudgetApplication"
         android:allowBackup="true"
@@ -20,7 +22,7 @@
             android:theme="@style/Theme.BudgetApp2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.CREATE_DOCUMENT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
