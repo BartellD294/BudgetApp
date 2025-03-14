@@ -17,12 +17,12 @@ object ViewModelProvider {
         }
         initializer {
             AddItemViewModel(
-                budgetApplication().container.repository
+                budgetApplication().container.repository,
             )
         }
         initializer {
             SettingsViewModel(
-                budgetApplication().container.repository
+                budgetApplication().container.repository,
             )
         }
     }
