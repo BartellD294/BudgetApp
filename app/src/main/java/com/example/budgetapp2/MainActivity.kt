@@ -28,8 +28,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    fun exportDatabase() {
-    startActivityForResult(intent, 1)
 }
 
 

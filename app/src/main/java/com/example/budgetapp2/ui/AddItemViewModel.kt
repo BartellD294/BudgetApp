@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.BudgetItemsRepository
+import kotlinx.coroutines.flow.first
 
 class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository): ViewModel() {
 
@@ -14,6 +15,11 @@ class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository)
 
     fun updateUiState(newExpenseUiState: ExpenseUiState) {
         this.expenseUiState = newExpenseUiState
+    }
+
+    suspend fun updateUiStateById(id: Int) {
+        val budgetItem = budgetItemsRepository.getItemsStream(id).first()
+        this.expenseUiState = budgetItem!!.toExpenseUiState()
     }
 
     fun updateName(name: String) {
@@ -32,6 +38,10 @@ class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository)
         expenseUiState = expenseUiState.copy(frequency = frequency)
     }
 
+    fun updateButton(buttonIndex: Int) {
+        expenseUiState = expenseUiState.copy(buttonIndex = buttonIndex)
+    }
+
     suspend fun enterExpense() {
         val newExpense = expenseUiState.toExpense()
 
@@ -40,6 +50,7 @@ class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository)
 }
 
 data class ExpenseUiState(
+    val buttonIndex: Int = 0,
     val id: Int = 0,
     val name: String = "",
     val category: String = "",
@@ -54,4 +65,12 @@ fun ExpenseUiState.toExpense(): BudgetItem = BudgetItem(
     amount = (cost.toDoubleOrNull()) ?: 0.0,
     frequency = frequency,
     date = ""
+)
+
+fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseUiState(
+    buttonIndex = buttonIndex,
+    id = id,
+    name = name,
+    category = category,
+    cost = amount.toString(),
 )

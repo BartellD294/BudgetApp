@@ -9,17 +9,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class BudgetListViewModel(
-    repository: BudgetItemsRepository
-): ViewModel() {
-    val budgetListUiState: StateFlow<BudgetListUiState> =
-        repository.getAllItemsStream().map { BudgetListUiState(it) }
+class HomeViewModel(repository: BudgetItemsRepository): ViewModel() {
+    val homeUiState: StateFlow<HomeUiState> =
+        repository.getAllItemsStream().map { HomeUiState(it) }
             .stateIn(
                 scope= viewModelScope,
-                started=SharingStarted.WhileSubscribed(5_000L),
-                initialValue=BudgetListUiState()
+                started= SharingStarted.WhileSubscribed(5_000L),
+                initialValue= HomeUiState()
             )
 }
 
-
-public data class BudgetListUiState(val budgetItemList: List<BudgetItem> = listOf())
+data class HomeUiState(val budgetItemList: List<BudgetItem> = listOf())

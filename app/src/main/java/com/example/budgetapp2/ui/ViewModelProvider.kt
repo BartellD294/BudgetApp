@@ -11,6 +11,11 @@ import com.example.budgetapp2.ui.BudgetListViewModel
 object ViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
+            HomeViewModel(
+                budgetApplication().container.repository
+            )
+        }
+        initializer {
             BudgetListViewModel(
                 budgetApplication().container.repository
             )

@@ -50,10 +50,10 @@ fun SettingsScreen() {
         , horizontalAlignment = Alignment.CenterHorizontally) {
         ExportOrImportButton(viewModel)
         if (viewModel.optionsUiState.buttonIndex == 0) {
-            ExportButton(viewModel, context)
+            //ExportButton(viewModel, context)
         }
         else {
-            ImportButton(viewModel, context)
+           // ImportButton(viewModel, context)
 
         }
         }

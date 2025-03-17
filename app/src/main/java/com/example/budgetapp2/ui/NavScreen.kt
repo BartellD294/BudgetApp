@@ -68,7 +68,13 @@ fun NavScreen() {
                 HomeScreen()
             }
             composable(Screen.BudgetList.route) {
-                BudgetListScreen()
+                BudgetListScreen(navController = navController)
+            }
+            composable(
+                route = "EditItem/{id}") {
+                navBackStackEntry ->
+                val id = navBackStackEntry.arguments?.getString("id")
+                AddItemScreen(popBackStack = { navController.popBackStack() }, id = id)
             }
             composable(Screen.AddItem.route) {
                 AddItemScreen(popBackStack = { navController.popBackStack() })

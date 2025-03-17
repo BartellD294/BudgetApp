@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,10 +22,15 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,21 +45,54 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
 @Composable
 fun AddItemScreen(
     viewModel: AddItemViewModel = viewModel(factory = ViewModelProvider.Factory),
+    id: String? = null,
     popBackStack: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    if (id != null) {
+        LaunchedEffect(true) {
+            coroutineScope {
+                launch {
+                    viewModel.updateUiStateById(id.toInt())
+                }
+            }
+        }
+    }
+
     val isDropDownExpanded = remember { mutableStateOf(false) }
 
 
     Scaffold(
         topBar = {
-            Text("Add Expense")
+            SingleChoiceSegmentedButtonRow(modifier = Modifier
+                .padding(1.dp).fillMaxWidth()
+            ) {
+                SegmentedButton(
+                    selected = viewModel.expenseUiState.buttonIndex == 0,
+                    onClick = { viewModel.updateButton(0) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = 0,
+                        count = 2
+                    ),
+                    label = { Text(text = "Expense") },
+                )
+                SegmentedButton(
+                    selected = viewModel.expenseUiState.buttonIndex == 1,
+                    onClick = { viewModel.updateButton(1) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = 1,
+                        count = 2
+                    ),
+                    label = { Text(text = "Income") },
+                )
+            }
         },
         bottomBar = {
             Button(
@@ -69,128 +108,109 @@ fun AddItemScreen(
                 Text("Enter Item")
             }
         },
-        content = {
-                it
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(32.dp)
-            ) {
-                OutlinedTextField(
-                    value = viewModel.expenseUiState.name,
-                    onValueChange = viewModel::updateName,
-                    label = { Text("Item Name") },
-                    maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = viewModel.expenseUiState.category,
-                    onValueChange = viewModel::updateCategory,
-                    label = { Text("Item Category") },
-                    maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = viewModel.expenseUiState.cost,
-                    onValueChange = viewModel::updateCost,
-                    label = { Text("Item Cost") },
-                    maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = viewModel.expenseUiState.frequency.toString(),
-                    onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Expense Frequency") },
-                    trailingIcon = {
-                        if (isDropDownExpanded.value) {
-                            Icon(Icons.Filled.KeyboardArrowUp,
-                                contentDescription = "description",
-                                Modifier.clickable {
-                                    isDropDownExpanded.value = !isDropDownExpanded.value
+        content = { innerPadding ->
+            Surface(modifier = Modifier.fillMaxSize()
+                .padding(top = innerPadding.calculateTopPadding()))
+            {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
+                ) {
+                    OutlinedTextField(
+                        value = viewModel.expenseUiState.name,
+                        onValueChange = viewModel::updateName,
+                        label = { Text("Item Name") },
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = viewModel.expenseUiState.cost,
+                        onValueChange = viewModel::updateCost,
+                        label = { Text("Item Cost") },
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = viewModel.expenseUiState.category,
+                        onValueChange = viewModel::updateCategory,
+                        label = { Text("Item Category") },
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        value = viewModel.expenseUiState.frequency.toString(),
+                        onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Expense Frequency") },
+                        trailingIcon = {
+                            if (isDropDownExpanded.value) {
+                                Icon(Icons.Filled.KeyboardArrowUp,
+                                    contentDescription = "description",
+                                    Modifier.clickable {
+                                        isDropDownExpanded.value = !isDropDownExpanded.value
+                                    }
+                                )
+                            } else {
+                                Icon(Icons.Filled.KeyboardArrowDown,
+                                    contentDescription = "description",
+                                    Modifier.clickable {
+                                        isDropDownExpanded.value = !isDropDownExpanded.value
+                                    }
+                                )
+                            }
+                        }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.TopEnd)
+                    ) {
+                        DropdownMenu(
+                            expanded = isDropDownExpanded.value,
+                            onDismissRequest = { isDropDownExpanded.value = false },
+                            //modifier = Modifier.fillMaxWidth()
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Daily") },
+                                onClick = {
+                                    isDropDownExpanded.value = false
+                                    viewModel.updateFrequency(1)
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Weekly") },
+                                onClick = {
+                                    isDropDownExpanded.value = false
+                                    viewModel.updateFrequency(7)
                                 }
                             )
-                        } else {
-                            Icon(Icons.Filled.KeyboardArrowDown,
-                                contentDescription = "description",
-                                Modifier.clickable {
-                                    isDropDownExpanded.value = !isDropDownExpanded.value
+                            DropdownMenuItem(
+                                text = { Text("Monthly") },
+                                onClick = {
+                                    isDropDownExpanded.value = false
+                                    viewModel.updateFrequency(30)
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Yearly") },
+                                onClick = {
+                                    isDropDownExpanded.value = false
+                                    viewModel.updateFrequency(365)
                                 }
                             )
                         }
                     }
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentSize(Alignment.TopEnd)
-                ) {
-                    DropdownMenu(
-                        expanded = isDropDownExpanded.value,
-                        onDismissRequest = { isDropDownExpanded.value = false },
-                        //modifier = Modifier.fillMaxWidth()
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Daily") },
-                            onClick = {
-                                isDropDownExpanded.value = false
-                                viewModel.updateFrequency(1)
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Weekly") },
-                            onClick = {
-                                isDropDownExpanded.value = false
-                                viewModel.updateFrequency(7)
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Monthly") },
-                            onClick = {
-                                isDropDownExpanded.value = false
-                                viewModel.updateFrequency(30)
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Yearly") },
-                            onClick = {
-                                isDropDownExpanded.value = false
-                                viewModel.updateFrequency(365)
-                            }
-                        )
-                    }
-                }
 
+                }
             }
+
 
         }
     )
 }
-
-
-
-
-        /*
-        ItemEntryBox(
-            expenseUiState = viewModel.expenseUiState,
-            onValueChange = viewModel::updateUiState,
-            label = Text("Item Name").toString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        ItemEntryBox(
-            expenseUiState = viewModel.expenseUiState,
-            onValueChange = viewModel::updateUiState,
-            label = Text("Item Cost").toString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        ItemEntryBox(
-            expenseUiState = viewModel.expenseUiState,
-            onValueChange = viewModel::updateUiState,
-            label = Text("Item Category").toString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        */
 
 @Composable
 fun ItemEntryBox(
