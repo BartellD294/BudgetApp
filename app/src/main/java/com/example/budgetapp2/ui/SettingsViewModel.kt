@@ -41,6 +41,7 @@ fun openFile(pickerInitialUri: Uri) {
 
 }
 
+/*
 class ExportActivity(): Activity() {
     val CREATE_FILE = 1
     fun exportDatabase() {
@@ -65,6 +66,8 @@ class ExportActivity(): Activity() {
     }
 }
 
+
+
 private fun writeFileToUri(uri:Uri, context: Context) {
     val inStream = context.getDatabasePath("budget_item_database").inputStream()
     val outStream = context.contentResolver.openOutputStream(uri)
@@ -74,6 +77,7 @@ private fun writeFileToUri(uri:Uri, context: Context) {
         }
     }
 }
+ */
 
 data class OptionsUiState(val buttonIndex: Int,
 val importDatabase: RoomDatabase?,

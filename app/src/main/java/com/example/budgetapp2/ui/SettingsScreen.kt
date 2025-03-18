@@ -1,7 +1,10 @@
 package com.example.budgetapp2.ui
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -14,7 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgetapp2.data.ExportActivity
 
 @Composable
 fun ExportOrImportButton(viewModel: SettingsViewModel) {
@@ -50,14 +55,21 @@ fun SettingsScreen() {
         , horizontalAlignment = Alignment.CenterHorizontally) {
         ExportOrImportButton(viewModel)
         if (viewModel.optionsUiState.buttonIndex == 0) {
-            //ExportButton(viewModel, context)
+            ExportButton(context)
         }
         else {
            // ImportButton(viewModel, context)
-
         }
-        }
-
-
-
     }
+}
+
+@Composable
+fun ExportButton(context: Context) {
+    Button(onClick = {
+        val intent = Intent(context, ExportActivity::class.java)
+        context.startActivity(intent)
+    }
+    ) {
+        Text(text = "Export")
+    }
+}
