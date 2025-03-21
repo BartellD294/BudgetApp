@@ -2,6 +2,10 @@ package com.example.budgetapp2.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
@@ -77,11 +81,21 @@ fun ExportButton(context: Context) {
 
 @Composable
 fun ImportButton(viewModel: SettingsViewModel, context: Context) {
+    var iuri: Uri? = null
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument(),
+        onResult = {
+            uri ->
+            iuri = uri
+        }
+    )
     Button(onClick = {
         val intent = Intent(context, ImportActivity::class.java)
         //intent.putExtra("viewModel", viewModel)
-        context.startActivity(intent)
-        intent.getStringExtra("import_string")
+        //context.startActivity(intent)
+        launcher.launch(arrayOf("*/*"))
+        if (iuri != null) {
+            Log.i("uri", iuri.toString())
+        }
     }
     ) {
         Text(text = "Import")
