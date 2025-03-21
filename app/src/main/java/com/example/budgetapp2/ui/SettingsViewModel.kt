@@ -8,6 +8,7 @@ import android.app.Application
 import android.app.ComponentCaller
 import android.net.Uri
 import android.provider.DocumentsContract
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,9 +17,11 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModel
 import androidx.room.RoomDatabase
 import com.example.budgetapp2.data.BudgetItemsRepository
+import java.io.Serializable
 
-class SettingsViewModel(repository: BudgetItemsRepository): ViewModel() {
+class SettingsViewModel(repository: BudgetItemsRepository): ViewModel(), Serializable {
     var optionsUiState by mutableStateOf(OptionsUiState(0, null, null))
+    var import_uri by mutableStateOf<Uri?>(null)
     fun updateButton(index: Int) {
         optionsUiState = optionsUiState.copy(buttonIndex = index)
     }
@@ -28,6 +31,10 @@ class SettingsViewModel(repository: BudgetItemsRepository): ViewModel() {
             addCategory(Intent.CATEGORY_OPENABLE)
             setType("text/plain")
         }
+    }
+    fun updateImportUri(uri: Uri) {
+        import_uri = uri
+        Log.i("uri", uri.toString())
     }
 }
 

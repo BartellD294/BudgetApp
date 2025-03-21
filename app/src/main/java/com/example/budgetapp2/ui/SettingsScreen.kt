@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp2.data.ExportActivity
+import com.example.budgetapp2.data.ImportActivity
 
 @Composable
 fun ExportOrImportButton(viewModel: SettingsViewModel) {
@@ -58,7 +59,7 @@ fun SettingsScreen() {
             ExportButton(context)
         }
         else {
-           // ImportButton(viewModel, context)
+           ImportButton(viewModel, context)
         }
     }
 }
@@ -71,5 +72,18 @@ fun ExportButton(context: Context) {
     }
     ) {
         Text(text = "Export")
+    }
+}
+
+@Composable
+fun ImportButton(viewModel: SettingsViewModel, context: Context) {
+    Button(onClick = {
+        val intent = Intent(context, ImportActivity::class.java)
+        //intent.putExtra("viewModel", viewModel)
+        context.startActivity(intent)
+        intent.getStringExtra("import_string")
+    }
+    ) {
+        Text(text = "Import")
     }
 }
