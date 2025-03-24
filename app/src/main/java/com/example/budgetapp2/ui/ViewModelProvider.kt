@@ -27,7 +27,8 @@ object ViewModelProvider {
         }
         initializer {
             SettingsViewModel(
-                budgetApplication().container.repository
+                budgetApplication().container.repository,
+                budgetApplication() as BudgetApplication
             )
         }
     }

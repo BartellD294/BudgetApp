@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import java.io.File
 
 @Database(entities= [BudgetItem::class], version=1, exportSchema = false)
 abstract class BudgetDatabase : RoomDatabase() {
@@ -14,14 +15,30 @@ abstract class BudgetDatabase : RoomDatabase() {
         @Volatile
         private var Instance: BudgetDatabase? = null
 
-        fun getDatabase(context: Context): BudgetDatabase {
-            return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, BudgetDatabase::class.java, "budget_item_database")
-                    .fallbackToDestructiveMigration()
-                    .build()
-                    .also { Instance = it }
+        fun getDatabase(context: Context, file: File? = null): BudgetDatabase {
+            if (file == null) {
+                return Instance ?: synchronized(this) {
+                    Room.databaseBuilder(
+                        context,
+                        BudgetDatabase::class.java,
+                        "budget_item_database"
+                    )
+                        .fallbackToDestructiveMigration()
+                        .build()
+                        .also { Instance = it }
+                }
+            } else {
+                return Instance ?: synchronized(this) {
+                    Room.databaseBuilder(
+                        context,
+                        BudgetDatabase::class.java,
+                        "budget_item_database"
+                    )
+                        .createFromFile(file)
+                        .build()
+                        .also { Instance = it }
+                }
             }
         }
     }
-
 }

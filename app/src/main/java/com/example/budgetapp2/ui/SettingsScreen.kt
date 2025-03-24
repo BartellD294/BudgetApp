@@ -31,7 +31,8 @@ fun ExportOrImportButton(viewModel: SettingsViewModel) {
     SingleChoiceSegmentedButtonRow {
         SegmentedButton(
             selected = viewModel.optionsUiState.buttonIndex == 0,
-            onClick = { viewModel.updateButton(0) },
+            onClick = { viewModel.updateButton(0)
+                      viewModel.resetDestinations()},
             shape = SegmentedButtonDefaults.itemShape(
                 index = 0,
                 count = 2
@@ -40,7 +41,8 @@ fun ExportOrImportButton(viewModel: SettingsViewModel) {
         )
         SegmentedButton(
             selected = viewModel.optionsUiState.buttonIndex == 1,
-            onClick = { viewModel.updateButton(1) },
+            onClick = { viewModel.updateButton(1)
+                      viewModel.resetDestinations()},
             shape = SegmentedButtonDefaults.itemShape(
                 index = 1,
                 count = 2
@@ -60,16 +62,29 @@ fun SettingsScreen() {
         , horizontalAlignment = Alignment.CenterHorizontally) {
         ExportOrImportButton(viewModel)
         if (viewModel.optionsUiState.buttonIndex == 0) {
-            ExportButton(context)
+            ExportDestinationButton(context)
+            StartExportButton(context)
         }
         else {
-           ImportButton(viewModel, context)
+            ImportDestinationButton(viewModel, context)
+            StartImportButton(viewModel, context)
         }
     }
 }
 
 @Composable
-fun ExportButton(context: Context) {
+fun ExportDestinationButton(context: Context) {
+    Button(onClick = {
+        val intent = Intent(context, ExportActivity::class.java)
+        context.startActivity(intent)
+    }
+    ) {
+        Text(text = "Select Export Destination")
+    }
+}
+
+@Composable
+fun StartExportButton(context: Context) {
     Button(onClick = {
         val intent = Intent(context, ExportActivity::class.java)
         context.startActivity(intent)
@@ -80,24 +95,26 @@ fun ExportButton(context: Context) {
 }
 
 @Composable
-fun ImportButton(viewModel: SettingsViewModel, context: Context) {
-    var iuri: Uri? = null
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument(),
-        onResult = {
-            uri ->
-            iuri = uri
+fun ImportDestinationButton(viewModel: SettingsViewModel, context: Context) {
+    //var destination_uri: Uri? = null
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument(), onResult = {
+            it.let { resultUri -> viewModel.updateImportUri(resultUri!!) }
         }
-    )
+        )
     Button(onClick = {
-        val intent = Intent(context, ImportActivity::class.java)
-        //intent.putExtra("viewModel", viewModel)
-        //context.startActivity(intent)
         launcher.launch(arrayOf("*/*"))
-        if (iuri != null) {
-            Log.i("uri", iuri.toString())
-        }
+    }) {
+        Text(text = "Select Import Destination")
     }
-    ) {
+}
+
+
+@Composable
+fun StartImportButton(viewModel: SettingsViewModel, context: Context) {
+    Button(onClick = {
+        viewModel.importDatabase()
+    } ) {
         Text(text = "Import")
     }
 }
