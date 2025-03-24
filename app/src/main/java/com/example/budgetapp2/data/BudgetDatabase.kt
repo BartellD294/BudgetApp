@@ -23,7 +23,6 @@ abstract class BudgetDatabase : RoomDatabase() {
                         BudgetDatabase::class.java,
                         "budget_item_database"
                     )
-                        .addCallback()
                         .fallbackToDestructiveMigration()
                         .build()
                         .also { Instance = it }

@@ -17,14 +17,13 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModel
 import androidx.room.RoomDatabase
 import com.example.budgetapp2.BudgetApplication
+import com.example.budgetapp2.data.AppDataContainer
 import com.example.budgetapp2.data.BudgetItemsRepository
 import java.io.File
 import java.io.Serializable
 
 
-class SettingsViewModel(repository: BudgetItemsRepository,
-    val budgetApplication: BudgetApplication
-): ViewModel(), Serializable {
+class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serializable {
     var optionsUiState by mutableStateOf(OptionsUiState(0, null, null))
     var import_uri by mutableStateOf<Uri?>(null)
     var export_uri by mutableStateOf<Uri?>(null)
@@ -50,11 +49,17 @@ class SettingsViewModel(repository: BudgetItemsRepository,
         export_uri = null
     }
 
-    fun importDatabase() {
-        Log.i("start import uri", import_uri.toString())
-        val file: File = File(import_uri!!.path!!)
-        budgetApplication.updateDatabase(file)
-        budgetApplication.container.repository.getAllItemsStream()
+    fun importDatabase(context: Context) {
+        Log.i("start import uri", import_uri!!.path.toString())
+        val file = File(import_uri!!.path!!)
+        val dbPath = context.getDatabasePath("budget_item_database")
+        Log.i("db path", dbPath.toString())
+        application.container.getDatabase(context).close()
+        file.copyTo(dbPath, overwrite = true)
+
+        application.container.resetDatabase(context)
+
+        application.container.updateRepository()
     }
     fun exportDatabase(context: Context) {
         writeFileToUri(export_uri!!, context)

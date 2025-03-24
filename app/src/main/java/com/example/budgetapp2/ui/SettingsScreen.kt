@@ -141,7 +141,7 @@ fun ImportDestinationButton(viewModel: SettingsViewModel, context: Context) {
 @Composable
 fun StartImportButton(viewModel: SettingsViewModel, context: Context) {
     Button(onClick = {
-        viewModel.importDatabase()
+        viewModel.importDatabase(context)
     } ) {
         Text(text = "Import")
     }

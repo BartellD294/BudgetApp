@@ -13,6 +13,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,8 +23,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = viewModel(factory = ViewModelProvider.Factory)) {
-    val homeUiState by homeViewModel.homeUiState.collectAsState()
+    viewModel: HomeViewModel = viewModel(factory = ViewModelProvider.Factory)
+) {
+    val homeUiState by viewModel.homeUiState.collectAsState()
 
     Column() {
         Card(

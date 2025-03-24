@@ -5,30 +5,29 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.budgetapp2.BudgetApplication
-import com.example.budgetapp2.data.AppContainer
+import com.example.budgetapp2.data.AppDataContainer
 import com.example.budgetapp2.ui.BudgetListViewModel
 
 object ViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(
-                budgetApplication().container.repository
+                budgetApplication()
             )
         }
         initializer {
             BudgetListViewModel(
-                budgetApplication().container.repository
+                budgetApplication()
             )
         }
         initializer {
             AddItemViewModel(
-                budgetApplication().container.repository
+                budgetApplication()
             )
         }
         initializer {
             SettingsViewModel(
-                budgetApplication().container.repository,
-                budgetApplication() as BudgetApplication
+                budgetApplication(),
             )
         }
     }

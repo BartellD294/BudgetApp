@@ -4,11 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.budgetapp2.BudgetApplication
+import com.example.budgetapp2.data.AppDataContainer
 import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.BudgetItemsRepository
 import kotlinx.coroutines.flow.first
 
-class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository): ViewModel() {
+class AddItemViewModel(private val application: BudgetApplication): ViewModel() {
 
     var expenseUiState by mutableStateOf(ExpenseUiState())
         private set
@@ -18,7 +20,7 @@ class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository)
     }
 
     suspend fun updateUiStateById(id: Int) {
-        val budgetItem = budgetItemsRepository.getItemsStream(id).first()
+        val budgetItem = application.container.repository.getItemsStream(id).first()
         this.expenseUiState = budgetItem!!.toExpenseUiState()
     }
 
@@ -44,8 +46,7 @@ class AddItemViewModel(private val budgetItemsRepository: BudgetItemsRepository)
 
     suspend fun enterExpense() {
         val newExpense = expenseUiState.toExpense()
-
-        budgetItemsRepository.insertExpense(newExpense)
+        application.container.repository.insertExpense(newExpense)
     }
 }
 
