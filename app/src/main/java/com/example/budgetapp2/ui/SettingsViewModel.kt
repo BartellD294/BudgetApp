@@ -54,7 +54,12 @@ class SettingsViewModel(repository: BudgetItemsRepository,
         Log.i("start import uri", import_uri.toString())
         val file: File = File(import_uri!!.path!!)
         budgetApplication.updateDatabase(file)
+        budgetApplication.container.repository.getAllItemsStream()
     }
+    fun exportDatabase(context: Context) {
+        writeFileToUri(export_uri!!, context)
+    }
+
 }
 
 
@@ -65,6 +70,16 @@ fun openFile(pickerInitialUri: Uri) {
 
     }
 
+}
+
+private fun writeFileToUri(uri: Uri, context: Context) {
+    val inStream = context.getDatabasePath("budget_item_database").inputStream()
+    val outStream = context.contentResolver.openOutputStream(uri)
+    inStream.use { input ->
+        outStream.use { output ->
+            input.copyTo(output!!)
+        }
+    }
 }
 
 data class OptionsUiState(val buttonIndex: Int,

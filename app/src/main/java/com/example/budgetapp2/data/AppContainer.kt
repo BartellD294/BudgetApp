@@ -12,13 +12,6 @@ class AppDataContainer(
     private val file: File? = null
 ): AppContainer {
     override val repository: BudgetItemsRepository by lazy {
-        if (file == null) {
-            OfflineBudgetItemsRepository(
-                BudgetDatabase.getDatabase(context).budgetItemDao())
-        } else {
-            OfflineBudgetItemsRepository(
-                BudgetDatabase.getDatabase(context, file).budgetItemDao()
-            )
-        }
+        OfflineBudgetItemsRepository(BudgetDatabase.getDatabase(context).budgetItemDao())
     }
 }

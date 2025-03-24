@@ -62,8 +62,8 @@ fun SettingsScreen() {
         , horizontalAlignment = Alignment.CenterHorizontally) {
         ExportOrImportButton(viewModel)
         if (viewModel.optionsUiState.buttonIndex == 0) {
-            ExportDestinationButton(context)
-            StartExportButton(context)
+            ExportDestinationButton(viewModel, context)
+            //StartExportButton(context)
         }
         else {
             ImportDestinationButton(viewModel, context)
@@ -73,7 +73,7 @@ fun SettingsScreen() {
 }
 
 @Composable
-fun ExportDestinationButton(context: Context) {
+fun ExportDestinationButtonOld(context: Context) {
     Button(onClick = {
         val intent = Intent(context, ExportActivity::class.java)
         context.startActivity(intent)
@@ -84,7 +84,7 @@ fun ExportDestinationButton(context: Context) {
 }
 
 @Composable
-fun StartExportButton(context: Context) {
+fun StartExportButtonOld(context: Context) {
     Button(onClick = {
         val intent = Intent(context, ExportActivity::class.java)
         context.startActivity(intent)
@@ -95,15 +95,43 @@ fun StartExportButton(context: Context) {
 }
 
 @Composable
-fun ImportDestinationButton(viewModel: SettingsViewModel, context: Context) {
-    //var destination_uri: Uri? = null
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument(), onResult = {
-            it.let { resultUri -> viewModel.updateImportUri(resultUri!!) }
-        }
+fun ExportDestinationButton(viewModel: SettingsViewModel, context: Context) {
+    val exportLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.CreateDocument("*/*"),
+            onResult = {
+                it.let { resultUri ->
+                    Log.i("destination button uri", resultUri.toString())
+                    viewModel.updateExportUri(resultUri!!)
+                    viewModel.exportDatabase(context)
+                }
+            }
         )
     Button(onClick = {
-        launcher.launch(arrayOf("*/*"))
+        exportLauncher.launch("exportname")
+    })
+    {
+        Text(text = "Select Export Destination")
+    }
+}
+
+
+
+
+@Composable
+fun ImportDestinationButton(viewModel: SettingsViewModel, context: Context) {
+    //var destination_uri: Uri? = null
+    val importLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocument(),
+            onResult = {
+                it.let { resultUri ->
+                    viewModel.updateImportUri(resultUri!!)
+                }
+            }
+        )
+    Button(onClick = {
+        importLauncher.launch(arrayOf("*/*"))
     }) {
         Text(text = "Select Import Destination")
     }
