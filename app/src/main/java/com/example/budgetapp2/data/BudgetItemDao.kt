@@ -19,6 +19,15 @@ interface BudgetItemDao {
     @Delete
     suspend fun deleteExpense(expense: BudgetItem)
 
+    @Query("SELECT MAX (amount) FROM expenses")
+    fun getMaxAmount(): Flow<Double>
+
+    @Query("SELECT MAX (cost) FROM expenses")
+    fun getMaxCost(): Flow<Double>
+
+    @Query("SELECT MAX (amountPerWeek) FROM expenses")
+    fun getMaxCostPerWeek(): Flow<Double>
+
     @Query("SELECT * FROM expenses")
     fun getAllExpenses(): Flow<List<BudgetItem>>
 

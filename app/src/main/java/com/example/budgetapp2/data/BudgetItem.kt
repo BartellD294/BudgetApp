@@ -9,10 +9,12 @@ import java.util.Locale
 data class BudgetItem(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
+    val cost: Double,
     val amount: Double,
     val category: String,
-    val frequency: Int,
-    val date: String
+    val frequency: Double,
+    val date: String,
+    val amountPerWeek: Double = amount * cost / frequency
 )
 
 public fun amountToCurrency(amount: Double): String {

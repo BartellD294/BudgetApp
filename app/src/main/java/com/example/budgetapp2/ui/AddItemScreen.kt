@@ -126,7 +126,7 @@ fun AddItemScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value = viewModel.expenseUiState.cost,
+                        value = viewModel.expenseUiState.cost.toString(),
                         onValueChange = viewModel::updateCost,
                         label = { Text("Item Cost") },
                         maxLines = 1,

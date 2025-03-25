@@ -56,15 +56,17 @@ data class ExpenseUiState(
     val name: String = "",
     val category: String = "",
     val cost: String = "",
+    val amount: String = "",
     val frequency: Int = 0
 )
 
 fun ExpenseUiState.toExpense(): BudgetItem = BudgetItem(
     id = id,
     name = name,
+    cost = cost.toDouble(),
     category = category,
-    amount = (cost.toDoubleOrNull()) ?: 0.0,
-    frequency = frequency,
+    amount = amount.toDouble(),
+    frequency = frequency.toDouble(),
     date = ""
 )
 
