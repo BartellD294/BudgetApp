@@ -43,6 +43,20 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
     fun updateButton(buttonIndex: Int) {
         expenseUiState = expenseUiState.copy(buttonIndex = buttonIndex)
     }
+    fun switchUseApiKey() {
+        if (expenseUiState.useApiKey) {
+            expenseUiState = expenseUiState.copy(apiKey = "")
+        }
+        expenseUiState = expenseUiState.copy(useApiKey = !expenseUiState.useApiKey)
+    }
+
+    fun updateAmount(amount: String) {
+        expenseUiState = expenseUiState.copy(amount = amount)
+    }
+
+    fun updateApiKey(apiKey: String) {
+        expenseUiState = expenseUiState.copy(apiKey = apiKey)
+    }
 
     suspend fun enterExpense() {
         val newExpense = expenseUiState.toExpense()
@@ -57,18 +71,29 @@ data class ExpenseUiState(
     val category: String = "",
     val cost: String = "",
     val amount: String = "",
-    val frequency: Int = 0
+    val frequency: Int = 0,
+    val useApiKey: Boolean = false,
+    val apiKey: String = ""
 )
 
-fun ExpenseUiState.toExpense(): BudgetItem = BudgetItem(
-    id = id,
-    name = name,
-    cost = cost.toDouble(),
-    category = category,
-    amount = amount.toDouble(),
-    frequency = frequency.toDouble(),
-    date = ""
-)
+fun ExpenseUiState.toExpense(): BudgetItem {
+    val itemApiKey: String?
+    if (apiKey == "") {
+        itemApiKey = null
+    } else {
+        itemApiKey = apiKey
+    }
+    return BudgetItem(
+        id = id,
+        name = name,
+        cost = cost.toDouble(),
+        category = category,
+        amount = amount.toDouble(),
+        frequency = frequency.toDouble(),
+        date = "",
+        apiKey = itemApiKey
+    )
+}
 
 fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseUiState(
     buttonIndex = buttonIndex,

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -115,8 +116,8 @@ fun AddItemScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(32.dp)
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     OutlinedTextField(
                         value = viewModel.expenseUiState.name,
@@ -129,6 +130,13 @@ fun AddItemScreen(
                         value = viewModel.expenseUiState.cost.toString(),
                         onValueChange = viewModel::updateCost,
                         label = { Text("Item Cost") },
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = viewModel.expenseUiState.amount,
+                        onValueChange = viewModel::updateAmount,
+                        label = { Text("Item Amount (per frequency period)") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -203,11 +211,33 @@ fun AddItemScreen(
                             )
                         }
                     }
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
 
+                    ) {
+                        Text("Use API Key?")
+                        Checkbox(
+                            checked = viewModel.expenseUiState.useApiKey,
+                            onCheckedChange = {
+                                viewModel.switchUseApiKey()
+                            },
+                            modifier = Modifier.fillMaxWidth()
+
+                        )
+                    }
+                    if (viewModel.expenseUiState.useApiKey) {
+                        OutlinedTextField(
+                            value = viewModel.expenseUiState.apiKey,
+                            onValueChange = viewModel::updateApiKey,
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text("API Key") },
+                            maxLines = 1,
+                        )
+                    }
                 }
             }
-
-
         }
     )
 }

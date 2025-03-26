@@ -67,8 +67,14 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    implementation(libs.retrofit2.converter.moshi)
+    implementation(libs.retrofit)
+    implementation (libs.moshi)
+    implementation (libs.moshi.kotlin)
+
+    implementation (libs.retrofit2.converter.moshi)
+
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.activity:activity:1.10.1")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
-
 }

@@ -1,9 +1,14 @@
 package com.example.budgetapp2.data
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import com.example.budgetapp2.BudgetApplication
+import com.example.budgetapp2.network.BudgetApiInterface
+import retrofit2.Retrofit
 import java.io.File
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 /*
 interface AppContainer {
@@ -12,13 +17,24 @@ interface AppContainer {
 
 */
 class AppDataContainer(
-    private val context: Context,
+    private val application: BudgetApplication,
     private val file: File? = null
 ) {
-    var database: BudgetDatabase? = BudgetDatabase.getDatabase(context)
-    /* override */ var repository: BudgetItemsRepository = OfflineBudgetItemsRepository(database!!.budgetItemDao())
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.stlouisfed.org/fred/")
+        .addConverterFactory(MoshiConverterFactory.create())
+        .build()
+    val budgetApiInterface: BudgetApiInterface = retrofit.create(BudgetApiInterface::class.java)
 
-    fun getDatabase(context: Context): BudgetDatabase {
+
+
+
+
+
+    var database: BudgetDatabase? = BudgetDatabase.getDatabase(application)
+    /* override */ var repository: BudgetItemsRepository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
+
+    fun getDatabase(context: Context = application): BudgetDatabase {
         return database ?: synchronized(this) {
             database ?: createDatabase(context).also {database = it}
         }
@@ -35,13 +51,13 @@ class AppDataContainer(
     fun updateDatabase(file: File) {
 
         Log.i("update database", "update database")
-        database = BudgetDatabase.getDatabase(context, file)
-        repository = OfflineBudgetItemsRepository(database!!.budgetItemDao())
+        database = BudgetDatabase.getDatabase(application, file)
+        repository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
 
     }
 
     fun updateRepository() {
-        repository = OfflineBudgetItemsRepository(database!!.budgetItemDao())
+        repository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
     }
 
     fun resetDatabase(context: Context) {

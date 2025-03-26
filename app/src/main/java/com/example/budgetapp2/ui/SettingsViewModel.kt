@@ -15,10 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.room.RoomDatabase
 import com.example.budgetapp2.BudgetApplication
 import com.example.budgetapp2.data.AppDataContainer
 import com.example.budgetapp2.data.BudgetItemsRepository
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.Serializable
 
@@ -47,6 +49,12 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
     fun resetDestinations() {
         import_uri = null
         export_uri = null
+    }
+
+    fun updateApis() {
+        viewModelScope.launch {
+            application.container.repository.updateItemsWithApiKeys()
+        }
     }
 
     fun importDatabase(context: Context) {

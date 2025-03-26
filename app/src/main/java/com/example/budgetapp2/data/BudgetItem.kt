@@ -14,7 +14,8 @@ data class BudgetItem(
     val category: String,
     val frequency: Double,
     val date: String,
-    val amountPerWeek: Double = amount * cost / frequency
+    val amountPerWeek: Double = amount * cost / frequency,
+    val apiKey: String? = null
 )
 
 public fun amountToCurrency(amount: Double): String {

@@ -69,28 +69,16 @@ fun SettingsScreen() {
             ImportDestinationButton(viewModel, context)
             StartImportButton(viewModel, context)
         }
+        UpdateApisButton(viewModel)
     }
 }
 
 @Composable
-fun ExportDestinationButtonOld(context: Context) {
+fun UpdateApisButton(viewModel: SettingsViewModel) {
     Button(onClick = {
-        val intent = Intent(context, ExportActivity::class.java)
-        context.startActivity(intent)
-    }
-    ) {
-        Text(text = "Select Export Destination")
-    }
-}
-
-@Composable
-fun StartExportButtonOld(context: Context) {
-    Button(onClick = {
-        val intent = Intent(context, ExportActivity::class.java)
-        context.startActivity(intent)
-    }
-    ) {
-        Text(text = "Export")
+        viewModel.updateApis()
+    }) {
+        Text(text = "Update APIs")
     }
 }
 
