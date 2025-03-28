@@ -38,6 +38,6 @@ interface BudgetItemDao {
     @Query("SELECT * FROM expenses WHERE category = :category")
     fun getExpensesByCategory(category: String): Flow<List<BudgetItem>>
 
-    @Query("SELECT * FROM expenses WHERE apiKey IS NOT NULL")
-    fun getExpensesWithApiKey(): Flow<List<BudgetItem>>
+    @Query("SELECT * FROM expenses WHERE seriesId IS NOT NULL")
+    fun getExpensesWithApiIds(): Flow<List<BudgetItem>>
 }

@@ -93,7 +93,7 @@ fun ExpenseUiState.toExpense(): BudgetItem {
         frequency = frequency.toDouble(),
         category = category,
         date = "",
-        apiKey = itemApiKey
+        seriesId = itemApiKey
     )
 }
 
@@ -105,7 +105,7 @@ fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseU
     amount = amount.toString(),
     frequency = frequency.toInt(),
     category = category,
-    useApiKey = apiKey != null,
-    apiKey = apiKey ?: ""
+    useApiKey = seriesId != null,
+    apiKey = seriesId ?: ""
 
 )

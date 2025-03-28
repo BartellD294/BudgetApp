@@ -53,7 +53,7 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
 
     fun updateApis() {
         viewModelScope.launch {
-            application.container.repository.updateItemsWithApiKeys()
+            application.container.repository.updateItemsWithApiIds()
         }
     }
 
