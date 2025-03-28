@@ -1,12 +1,12 @@
 package com.example.budgetapp2.data
 
 import android.util.Log
-import com.example.budgetapp2.network.BudgetApiInterface
+import com.example.budgetapp2.network.BudgetApiService
 import kotlinx.coroutines.flow.Flow
 
 class OfflineBudgetItemsRepository(
     private val budgetItemDao: BudgetItemDao,
-    private val apiInterface: BudgetApiInterface
+    private val apiService: BudgetApiService
 ) : BudgetItemsRepository {
 
     private val apiKey = "884bbca41956e979caa1e58636c77461"
@@ -24,20 +24,21 @@ class OfflineBudgetItemsRepository(
         budgetItemDao.getExpensesWithApiKey().collect { items ->
             for (item in items) {
                 item.apiKey.let { series ->
-                    //try {
-                        //val apiResponse = apiInterface.getCost(series!!, apiKey)
-                    val apiResponse = apiInterface.getGNPCA()
-                        //if (apiResponse.isSuccessful) {
+                    try {
+                        val apiResponse = apiService.getCost(series!!, apiKey)
+                        if (apiResponse.observ.isNotEmpty()) {
                             Log.i(
                                 "updateItemsWithApiKeys",
-                                apiResponse.body()!!.observations.firstOrNull()!!.value.toString())
-                        //}
-                    //} catch (e: Exception) {
-                      //  Log.e("updateItemsWithApiKeys", e.message.toString())
-                    //}
+                                apiResponse.toString()
+                                )
+                        } else {
+
+                        }
+                    } catch (e: Exception) {
+                        Log.e("updateItemsWithApiKeys", e.message.toString())
+                    }
                 }
             }
         }
-
     }
 }

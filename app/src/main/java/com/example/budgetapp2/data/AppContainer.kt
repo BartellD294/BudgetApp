@@ -5,26 +5,23 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.example.budgetapp2.BudgetApplication
-import com.example.budgetapp2.network.BudgetApiInterface
+import com.example.budgetapp2.network.BudgetApiService
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.Retrofit
 import java.io.File
-import retrofit2.converter.moshi.MoshiConverterFactory
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 
-/*
-interface AppContainer {
-    var repository: BudgetItemsRepository?
-}
-
-*/
 class AppDataContainer(
     private val application: BudgetApplication,
     private val file: File? = null
 ) {
+    private val json = Json { ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.stlouisfed.org/fred/")
-        .addConverterFactory(MoshiConverterFactory.create())
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
-    val budgetApiInterface: BudgetApiInterface = retrofit.create(BudgetApiInterface::class.java)
+    val budgetApiInterface: BudgetApiService = retrofit.create(BudgetApiService::class.java)
 
 
 

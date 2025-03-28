@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.20"
 }
 
 android {
@@ -67,12 +68,13 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
-    implementation(libs.retrofit2.converter.moshi)
     implementation(libs.retrofit)
-    implementation (libs.moshi)
-    implementation (libs.moshi.kotlin)
+    implementation (libs.converter.kotlinx.serialization)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp)
 
-    implementation (libs.retrofit2.converter.moshi)
+
 
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.activity:activity:1.10.1")

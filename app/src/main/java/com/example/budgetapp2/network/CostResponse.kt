@@ -1,11 +1,16 @@
 package com.example.budgetapp2.network
 
-import com.squareup.moshi.Json
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CostResponse(
-    @Json(name = "observations") val observations: List<Observation>
+    @SerialName(value = "observations") val observ: List<Observation>
 )
 
+@Serializable
 data class Observation(
-    @Json(name = "value") val value: String
+    @SerialName(value = "date") val date: String,
+    @SerialName(value = "value") val cost: String
 )
