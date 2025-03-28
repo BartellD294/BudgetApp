@@ -125,7 +125,7 @@ fun ListItem(budgetItem: BudgetItem, navController: NavController) {
                 //.fillMaxWidth()
             )
             Text(
-                text = amountToCurrency(budgetItem.amount),
+                text = amountToCurrency(budgetItem.cost),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                 //.fillMaxWidth()

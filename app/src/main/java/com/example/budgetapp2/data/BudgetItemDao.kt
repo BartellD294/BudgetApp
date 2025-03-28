@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BudgetItemDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExpense(expense: BudgetItem)
 
     @Update
     suspend fun updateExpense(expense: BudgetItem)
+
 
     @Delete
     suspend fun deleteExpense(expense: BudgetItem)
@@ -32,7 +33,7 @@ interface BudgetItemDao {
     fun getAllExpenses(): Flow<List<BudgetItem>>
 
     @Query("SELECT * FROM expenses WHERE id = :id")
-    fun getExpenseById(id: Int): Flow<BudgetItem>
+    fun getItemById(id: Int): Flow<BudgetItem>
 
     @Query("SELECT * FROM expenses WHERE category = :category")
     fun getExpensesByCategory(category: String): Flow<List<BudgetItem>>

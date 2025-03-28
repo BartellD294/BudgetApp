@@ -1,5 +1,6 @@
 package com.example.budgetapp2.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,8 +21,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
     }
 
     suspend fun updateUiStateById(id: Int) {
-        val budgetItem = application.container.repository.getItemsStream(id).first()
-        this.expenseUiState = budgetItem!!.toExpenseUiState()
+        val budgetItem = application.container.repository.getItemById(id).first()
+        this.expenseUiState = budgetItem.toExpenseUiState()
     }
 
     fun updateName(name: String) {
@@ -59,6 +60,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
     }
 
     suspend fun enterExpense() {
+        Log.i("Entering item", expenseUiState.toString())
         val newExpense = expenseUiState.toExpense()
         application.container.repository.insertExpense(newExpense)
     }
@@ -87,9 +89,9 @@ fun ExpenseUiState.toExpense(): BudgetItem {
         id = id,
         name = name,
         cost = cost.toDouble(),
-        category = category,
         amount = amount.toDouble(),
         frequency = frequency.toDouble(),
+        category = category,
         date = "",
         apiKey = itemApiKey
     )
@@ -99,6 +101,11 @@ fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseU
     buttonIndex = buttonIndex,
     id = id,
     name = name,
-    category = category,
     cost = amount.toString(),
+    amount = amount.toString(),
+    frequency = frequency.toInt(),
+    category = category,
+    useApiKey = apiKey != null,
+    apiKey = apiKey ?: ""
+
 )
