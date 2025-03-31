@@ -4,10 +4,14 @@ import kotlinx.coroutines.flow.Flow
 
 interface BudgetItemsRepository {
     fun getAllItemsStream(): Flow<List<BudgetItem>>
+    fun getAllCategoriesStream() : Flow<List<Category>>
+
+    fun getCategoryCost(category: String): Flow<Double>
 
     fun getMaxAmount(): Flow<Double>
     fun getMaxCostPerWeek(): Flow<Double>
     fun getMaxCost(): Flow<Double>
+    fun getMaxCategoryTotal(): Flow<Double>
     fun getItemById(id: Int): Flow<BudgetItem>
     fun getExpensesWithApiKey(): Flow<List<BudgetItem>>
     suspend fun insertExpense(expense: BudgetItem)

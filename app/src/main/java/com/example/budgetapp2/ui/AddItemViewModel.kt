@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.budgetapp2.BudgetApplication
-import com.example.budgetapp2.data.AppDataContainer
 import com.example.budgetapp2.data.BudgetItem
-import com.example.budgetapp2.data.BudgetItemsRepository
 import kotlinx.coroutines.flow.first
 
 class AddItemViewModel(private val application: BudgetApplication): ViewModel() {

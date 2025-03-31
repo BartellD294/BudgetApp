@@ -1,16 +1,15 @@
 package com.example.budgetapp2.data
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.example.budgetapp2.BudgetApplication
 import com.example.budgetapp2.network.BudgetApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import retrofit2.Retrofit
-import java.io.File
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.Retrofit
+import java.io.File
 
 class AppDataContainer(
     private val application: BudgetApplication,

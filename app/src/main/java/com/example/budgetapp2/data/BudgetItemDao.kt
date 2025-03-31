@@ -26,11 +26,17 @@ interface BudgetItemDao {
     @Query("SELECT MAX (cost) FROM expenses")
     fun getMaxCost(): Flow<Double>
 
+    @Query("SELECT SUM (cost) FROM expenses WHERE category = :category")
+    fun getCategoryCost(category: String): Flow<Double>
+
     @Query("SELECT MAX (amountPerWeek) FROM expenses")
     fun getMaxCostPerWeek(): Flow<Double>
 
     @Query("SELECT * FROM expenses")
     fun getAllExpenses(): Flow<List<BudgetItem>>
+
+    @Query("SELECT DISTINCT category FROM expenses")
+    fun getAllCategories(): Flow<List<String>>
 
     @Query("SELECT * FROM expenses WHERE id = :id")
     fun getItemById(id: Int): Flow<BudgetItem>

@@ -5,8 +5,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.budgetapp2.BudgetApplication
-import com.example.budgetapp2.data.AppDataContainer
-import com.example.budgetapp2.ui.BudgetListViewModel
 
 object ViewModelProvider {
     val Factory = viewModelFactory {
