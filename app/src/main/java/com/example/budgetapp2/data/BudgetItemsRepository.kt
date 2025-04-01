@@ -14,6 +14,7 @@ interface BudgetItemsRepository {
     fun getMaxCategoryTotal(): Flow<Double>
     fun getItemById(id: Int): Flow<BudgetItem>
     fun getExpensesWithApiKey(): Flow<List<BudgetItem>>
+    fun getAllExpensesTotal(): Flow<Double>
     suspend fun insertExpense(expense: BudgetItem)
     suspend fun deleteExpense(expense: BudgetItem)
     suspend fun updateExpense(expense: BudgetItem)

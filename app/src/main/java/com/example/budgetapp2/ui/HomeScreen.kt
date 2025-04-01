@@ -23,6 +23,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,7 +57,7 @@ fun HomeScreen(
                 onClick = { viewModel.updateButton(0) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = 0,
-                    count = 2
+                    count = 3
                 ),
                 label = { Text(text = "Bar Graph: Items") },
             )
@@ -64,9 +67,18 @@ fun HomeScreen(
                           Log.i("button index", homeUiState.buttonIndex.toString()) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = 1,
-                    count = 2
+                    count = 3
                 ),
                 label = { Text(text = "Bar Graph: Categories") },
+            )
+            SegmentedButton(
+                selected = homeUiState.buttonIndex == 2,
+                onClick = { viewModel.updateButton(2) },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = 2,
+                    count = 3
+                ),
+                label = { Text(text = "Pie Chart: Items") },
             )
         }
         if (homeUiState.buttonIndex == 0) {
@@ -74,6 +86,9 @@ fun HomeScreen(
         }
         else if (homeUiState.buttonIndex == 1) {
             CategoryBarGraph(homeUiState)
+        }
+        else if (homeUiState.buttonIndex == 2) {
+            ItemPieChart(homeUiState)
         }
 
     }
@@ -149,6 +164,51 @@ fun CategoryBarGraph(
         }
     }
 }
+
+@Composable
+fun ItemPieChart(homeUiState: HomeUiState) {
+    var itemIndex = 0
+    var itemStartAngle = 0.0
+    var itemFraction = 0.0
+    Canvas(
+        modifier = Modifier
+            .size(200.dp)
+            .padding(16.dp)
+    ) {
+        for (item in homeUiState.budgetItemList) {
+            itemFraction = (item.cost / homeUiState.totalCostOverall * 360.0)
+            drawArc(
+                color = colors[itemIndex % colors.size],
+                startAngle = itemStartAngle.toFloat(),
+                sweepAngle = itemFraction.toFloat(),
+                useCenter = true,
+                size = Size(size.width * 0.5f, size.height * 0.5f),
+                topLeft = Offset(size.width * 0.25f, 0f)
+            )
+            itemIndex += 1
+            itemStartAngle += itemFraction
+        }
+    }
+}
+val colors = listOf(
+    Color(0xFFF44336),
+    Color(0xFFE91E63),
+    Color(0xFF9C27B0),
+    Color(0xFF673AB7),
+    Color(0xFF3F51B5),
+    Color(0xFF2196F3),
+    Color(0xFF03A9F4),
+    Color(0xFF00BCD4),
+    Color(0xFF009688),
+    Color(0xFF4CAF50),
+    Color(0xFF8BC34A),
+    Color(0xFFCDDC39),
+    Color(0xFFFFEB3B),
+    Color(0xFFFFC107),
+    Color(0xFFFF9800),
+    Color(0xFFFF5722),
+    Color(0xFF795548),
+)
 
 /*
 

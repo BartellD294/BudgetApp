@@ -35,6 +35,9 @@ interface BudgetItemDao {
     @Query("SELECT * FROM expenses")
     fun getAllExpenses(): Flow<List<BudgetItem>>
 
+    @Query("SELECT SUM (cost) FROM expenses")
+    fun getAllExpensesTotal(): Flow<Double>
+
     @Query("SELECT DISTINCT category FROM expenses")
     fun getAllCategories(): Flow<List<String>>
 

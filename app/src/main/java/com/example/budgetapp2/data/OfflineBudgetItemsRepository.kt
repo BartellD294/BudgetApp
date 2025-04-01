@@ -21,6 +21,8 @@ class OfflineBudgetItemsRepository(
             }
         }
     }
+
+    override fun getAllExpensesTotal(): Flow<Double> = budgetItemDao.getAllExpensesTotal()
     override fun getMaxAmount(): Flow<Double> = budgetItemDao.getMaxAmount()
     override fun getMaxCostPerWeek(): Flow<Double> = budgetItemDao.getMaxCostPerWeek()
     override fun getMaxCost(): Flow<Double> = budgetItemDao.getMaxCost()
