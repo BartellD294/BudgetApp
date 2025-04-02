@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 interface BudgetItemsRepository {
     fun getAllItemsStream(): Flow<List<BudgetItem>>
     fun getAllCategoriesStream() : Flow<List<Category>>
+    //fun getAllItemsByCategory(): Flow<List<List<BudgetItem>>>
+    fun getItemsByCategory(category: String): Flow<List<BudgetItem>>
 
     fun getCategoryCost(category: String): Flow<Double>
 
@@ -15,6 +17,7 @@ interface BudgetItemsRepository {
     fun getItemById(id: Int): Flow<BudgetItem>
     fun getExpensesWithApiKey(): Flow<List<BudgetItem>>
     fun getAllExpensesTotal(): Flow<Double>
+    fun getAllItemsWithoutCategories(): Flow<List<BudgetItem>>
     suspend fun insertExpense(expense: BudgetItem)
     suspend fun deleteExpense(expense: BudgetItem)
     suspend fun updateExpense(expense: BudgetItem)

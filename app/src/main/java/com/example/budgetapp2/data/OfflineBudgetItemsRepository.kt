@@ -22,6 +22,11 @@ class OfflineBudgetItemsRepository(
         }
     }
 
+    //override fun getAllItemsByCategory(): Flow<List<List<BudgetItem>>> = budgetItemDao.getAllItemsByCategory()
+
+    override fun getItemsByCategory(category: String): Flow<List<BudgetItem>> = budgetItemDao.getExpensesByCategory(category)
+
+    override fun getAllItemsWithoutCategories(): Flow<List<BudgetItem>> = budgetItemDao.getAllItemsWithoutCategories()
     override fun getAllExpensesTotal(): Flow<Double> = budgetItemDao.getAllExpensesTotal()
     override fun getMaxAmount(): Flow<Double> = budgetItemDao.getMaxAmount()
     override fun getMaxCostPerWeek(): Flow<Double> = budgetItemDao.getMaxCostPerWeek()

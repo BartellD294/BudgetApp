@@ -16,7 +16,6 @@ interface BudgetItemDao {
     @Update
     suspend fun updateExpense(expense: BudgetItem)
 
-
     @Delete
     suspend fun deleteExpense(expense: BudgetItem)
 
@@ -35,8 +34,14 @@ interface BudgetItemDao {
     @Query("SELECT * FROM expenses")
     fun getAllExpenses(): Flow<List<BudgetItem>>
 
+    //@Query("SELECT * FROM expenses GROUP BY category")
+    //fun getAllItemsByCategory(): Flow<List<List<BudgetItem>>>
+
     @Query("SELECT SUM (cost) FROM expenses")
     fun getAllExpensesTotal(): Flow<Double>
+
+    @Query("SELECT * FROM expenses WHERE category IS NULL")
+    fun getAllItemsWithoutCategories(): Flow<List<BudgetItem>>
 
     @Query("SELECT DISTINCT category FROM expenses")
     fun getAllCategories(): Flow<List<String>>

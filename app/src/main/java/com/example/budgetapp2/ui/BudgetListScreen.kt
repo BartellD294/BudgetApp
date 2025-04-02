@@ -39,6 +39,7 @@ fun BudgetListScreen(
     SectionsList(budgetListUiState.budgetItemList.groupBy { it.category }.values.toList(), navController)
 }
 
+
 @Composable
 fun SectionsList(sectionsList: List<List<BudgetItem>>, navController: NavController) {
     Column(modifier = Modifier.fillMaxWidth()) {

@@ -24,6 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -99,15 +102,18 @@ fun ItemBarGraph(
     homeUiState: HomeUiState
 ) {
 
-    LazyRow {
+    LazyRow(
+        verticalAlignment = Alignment.Bottom,
+    ) {
         //Log.i("Max cost", homeUiState.maxCost.toString())
         Log.i("Item 1 cost", homeUiState.budgetItemList.toString())
         //Log.i("Item 1 height", ((homeUiState.budgetItemList[0].cost / homeUiState.maxCost) * barGraphMaxHeight).toString())
         items(homeUiState.budgetItemList.size) { index ->
+            val thisHeight = ((homeUiState.budgetItemList[index].cost / homeUiState.maxCost) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
-                    height = ((homeUiState.budgetItemList[index].cost / homeUiState.maxCost) * barGraphMaxHeight).dp
+                    height = thisHeight.dp
                 )
                 .padding(4.dp)
                 .background(Color.LightGray)
@@ -134,7 +140,9 @@ fun ItemBarGraph(
 fun CategoryBarGraph(
     homeUiState: HomeUiState
 ) {
-    LazyRow {
+    LazyRow(
+        verticalAlignment = Alignment.Bottom,
+    ) {
         //Log.i("Max cost", homeUiState.maxCost.toString())
         Log.i("Item 1 cost", homeUiState.budgetItemList.toString())
         //Log.i("Item 1 height", ((homeUiState.budgetItemList[0].cost / homeUiState.maxCost) * barGraphMaxHeight).toString())
@@ -147,7 +155,8 @@ fun CategoryBarGraph(
                 .padding(4.dp)
                 .background(Color.LightGray)
             ) {
-                Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
+                //Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
+                Text(text = "[" + (index+1).toString() + "]",
                     modifier = Modifier.align(Alignment.BottomCenter),
                     textAlign = androidx.compose.ui.text.style.TextAlign.End)
             }
@@ -157,7 +166,7 @@ fun CategoryBarGraph(
         items(homeUiState.categoryList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
-                //Text(text = "[" + homeUiState.categoryList[index].name.to + "]")
+                Text(text = "[" + (index+1).toString() + "]")
                 Text(text = homeUiState.categoryList[index].name)
                 Text(text = homeUiState.categoryList[index].totalCost.toString())
             }
@@ -170,25 +179,43 @@ fun ItemPieChart(homeUiState: HomeUiState) {
     var itemIndex = 0
     var itemStartAngle = 0.0
     var itemFraction = 0.0
-    Canvas(
-        modifier = Modifier
-            .size(200.dp)
-            .padding(16.dp)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        for (item in homeUiState.budgetItemList) {
-            itemFraction = (item.cost / homeUiState.totalCostOverall * 360.0)
-            drawArc(
-                color = colors[itemIndex % colors.size],
-                startAngle = itemStartAngle.toFloat(),
-                sweepAngle = itemFraction.toFloat(),
-                useCenter = true,
-                size = Size(size.width * 0.5f, size.height * 0.5f),
-                topLeft = Offset(size.width * 0.25f, 0f)
-            )
-            itemIndex += 1
-            itemStartAngle += itemFraction
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(30.dp)
+        ) {
+            for (item in homeUiState.budgetItemList) {
+                itemFraction = (item.cost / homeUiState.totalCostOverall * 360.0)
+                drawArc(
+                    color = colors[homeUiState.budgetItemList.indexOf(item) % colors.size],
+                    startAngle = itemStartAngle.toFloat(),
+                    sweepAngle = itemFraction.toFloat(),
+                    useCenter = true,
+                    size = Size(size.width, size.height),
+                    topLeft = Offset(0f, 0f)
+                )
+                itemIndex += 1
+                itemStartAngle += itemFraction
+            }
+        }
+        LazyColumn(modifier = Modifier) {
+            items(homeUiState.budgetItemList.size) { index ->
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,) {
+                    Text(text = "[" + homeUiState.budgetItemList[index].id.toString() + "]",
+                        color = colors[homeUiState.budgetItemList.indexOf(homeUiState.budgetItemList[index]) % colors.size])
+                    Text(text = homeUiState.budgetItemList[index].name)
+                    Text(text = homeUiState.budgetItemList[index].cost.toString())
+                }
+            }
         }
     }
+
 }
 val colors = listOf(
     Color(0xFFF44336),
