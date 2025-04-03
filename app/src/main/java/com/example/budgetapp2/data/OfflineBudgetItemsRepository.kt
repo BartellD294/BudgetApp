@@ -21,6 +21,7 @@ class OfflineBudgetItemsRepository(
             }
         }
     }
+    override fun getAllCategoryNames(): Flow<List<String>> = budgetItemDao.getAllCategories()
 
     //override fun getAllItemsByCategory(): Flow<List<List<BudgetItem>>> = budgetItemDao.getAllItemsByCategory()
 

@@ -18,6 +18,7 @@ interface BudgetItemsRepository {
     fun getExpensesWithApiKey(): Flow<List<BudgetItem>>
     fun getAllExpensesTotal(): Flow<Double>
     fun getAllItemsWithoutCategories(): Flow<List<BudgetItem>>
+    fun getAllCategoryNames(): Flow<List<String>>
     suspend fun insertExpense(expense: BudgetItem)
     suspend fun deleteExpense(expense: BudgetItem)
     suspend fun updateExpense(expense: BudgetItem)

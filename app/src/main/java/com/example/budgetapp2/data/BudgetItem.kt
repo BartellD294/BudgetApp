@@ -11,7 +11,7 @@ data class BudgetItem(
     val name: String,
     val cost: Double,
     val amount: Double,
-    val category: String,
+    val category: String = "Uncategorized",
     val frequency: Double,
     val date: String,
     val amountPerWeek: Double = amount * cost / frequency,
