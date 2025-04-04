@@ -1,26 +1,37 @@
 package com.example.budgetapp2.data
 
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 interface BudgetItemsRepository {
-    fun getAllItemsStream(): Flow<List<BudgetItem>>
-    fun getAllCategoriesStream() : Flow<List<Category>>
-    //fun getAllItemsByCategory(): Flow<List<List<BudgetItem>>>
-    fun getItemsByCategory(category: String): Flow<List<BudgetItem>>
+    suspend fun insertItem(item: BudgetItem)
+    suspend fun updateItem(item: BudgetItem)
+    suspend fun deleteItem(item: BudgetItem)
 
-    fun getCategoryCost(category: String): Flow<Double>
+    fun getAllItems(): Flow<List<BudgetItem>>
+    fun getAllExpensesOrIncomes(expenseOrIncome: Int): Flow<List<BudgetItem>>
 
-    fun getMaxAmount(): Flow<Double>
-    fun getMaxCostPerWeek(): Flow<Double>
-    fun getMaxCost(): Flow<Double>
-    fun getMaxCategoryTotal(): Flow<Double>
     fun getItemById(id: Int): Flow<BudgetItem>
-    fun getExpensesWithApiKey(): Flow<List<BudgetItem>>
-    fun getAllExpensesTotal(): Flow<Double>
-    fun getAllItemsWithoutCategories(): Flow<List<BudgetItem>>
     fun getAllCategoryNames(): Flow<List<String>>
-    suspend fun insertExpense(expense: BudgetItem)
-    suspend fun deleteExpense(expense: BudgetItem)
-    suspend fun updateExpense(expense: BudgetItem)
+    fun getAllExpenseOrIncomeCategoryNames(expenseOrIncome: Int): Flow<List<String>>
+
+    fun getAllItemsOfCategory(category: String): Flow<List<BudgetItem>>
+    fun getAllExpensesOrIncomesOfCategory(category: String, expenseOrIncome: Int): Flow<List<BudgetItem>>
+    fun getAllItemsWithoutCategory(): Flow<List<BudgetItem>>
+    fun getAllExpensesOrIncomesWithoutCategory(expenseOrIncome: Int): Flow<List<BudgetItem>>
+
+    fun getTotalValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    fun getMaxValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    fun getTotalCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double>
+
+
+    //no income counterpart because incomes don't have quantity
+    fun getMaxExpenseQuantity(): Flow<Double>
+
+    fun getAllExpensesWithApiIds(): Flow<List<BudgetItem>>
+
+    //These are only in OfflineBudgetItemsRepository (not direct DAO calls)
+    fun getAllCategoriesExpensesOrIncomes(expenseOrIncome: Int): Flow<List<Category>>
+    fun getMaxTotalCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double>
     suspend fun updateItemsWithApiIds()
 }

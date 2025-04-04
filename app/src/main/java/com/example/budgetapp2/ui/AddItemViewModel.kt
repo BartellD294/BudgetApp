@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.room.util.query
 import com.example.budgetapp2.BudgetApplication
 import com.example.budgetapp2.data.BudgetItem
 import kotlinx.coroutines.flow.first
@@ -31,8 +32,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         expenseUiState = expenseUiState.copy(category = category)
     }
 
-    fun updateCost(cost: String) {
-        expenseUiState = expenseUiState.copy(cost = cost)
+    fun updateValue(value: String) {
+        expenseUiState = expenseUiState.copy(value = value)
     }
 
     fun updateFrequency(frequency: Int) {
@@ -49,18 +50,18 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         expenseUiState = expenseUiState.copy(useApiKey = !expenseUiState.useApiKey)
     }
 
-    fun updateAmount(amount: String) {
-        expenseUiState = expenseUiState.copy(amount = amount)
+    fun updateQuantity(quantity: String) {
+        expenseUiState = expenseUiState.copy(quantity = quantity)
     }
 
     fun updateApiKey(apiKey: String) {
         expenseUiState = expenseUiState.copy(apiKey = apiKey)
     }
 
-    suspend fun enterExpense() {
+    suspend fun enterItem() {
         Log.i("Entering item", expenseUiState.toString())
         val newExpense = expenseUiState.toExpense()
-        application.container.repository.insertExpense(newExpense)
+        application.container.repository.insertItem(newExpense)
     }
 }
 
@@ -69,8 +70,8 @@ data class ExpenseUiState(
     val id: Int = 0,
     val name: String = "",
     val category: String = "",
-    val cost: String = "",
-    val amount: String = "",
+    val value: String = "",
+    val quantity: String = "",
     val frequency: Int = 0,
     val useApiKey: Boolean = false,
     val apiKey: String = ""
@@ -85,11 +86,13 @@ fun ExpenseUiState.toExpense(): BudgetItem {
     }
     return BudgetItem(
         id = id,
+        expenseOrIncome = buttonIndex,
         name = name,
-        cost = cost.toDouble(),
-        amount = amount.toDouble(),
+        value = value.toDouble(),
+        quantity = quantity.toDouble(),
+        category = category.ifEmpty { null },
+        subcategory = null,
         frequency = frequency.toDouble(),
-        category = category,
         date = "",
         seriesId = itemApiKey
     )
@@ -99,10 +102,12 @@ fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseU
     buttonIndex = buttonIndex,
     id = id,
     name = name,
-    cost = amount.toString(),
-    amount = amount.toString(),
+    value = value.toString(),
+    quantity = quantity.toString(),
     frequency = frequency.toInt(),
-    category = category,
+    //Note to self, String?.orEmpty = normal string if not null
+    // or "" if null
+    category = category.orEmpty(),
     useApiKey = seriesId != null,
     apiKey = seriesId ?: ""
 

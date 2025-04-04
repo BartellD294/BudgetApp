@@ -43,7 +43,9 @@ fun HomeScreen(
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
 
-    Column() {
+    Column(
+        //horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Card(
             modifier = Modifier.padding(4.dp)
                 .fillMaxWidth()
@@ -54,44 +56,62 @@ fun HomeScreen(
                     vertical = 8.dp)
                     .align(Alignment.CenterHorizontally))
         }
-        SingleChoiceSegmentedButtonRow {
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
             SegmentedButton(
-                selected = homeUiState.buttonIndex == 0,
-                onClick = { viewModel.updateButton(0) },
+                selected = homeUiState.barOrPie == 0,
+                onClick = { viewModel.updateBarOrPie(0) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = 0,
-                    count = 3
+                    count = 2
                 ),
-                label = { Text(text = "Bar Graph: Items") },
+                label = { Text(text = "Bar Graph") },
             )
             SegmentedButton(
-                selected = homeUiState.buttonIndex == 1,
-                onClick = { viewModel.updateButton(1)
-                          Log.i("button index", homeUiState.buttonIndex.toString()) },
+                selected = homeUiState.barOrPie == 1,
+                onClick = { viewModel.updateBarOrPie(1) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = 1,
-                    count = 3
+                    count = 2
                 ),
-                label = { Text(text = "Bar Graph: Categories") },
+                label = { Text(text = "Pie Chart") },
+            )
+        }
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            SegmentedButton(
+                selected = homeUiState.itemsOrCategories == 0,
+                onClick = { viewModel.updateItemsOrCategories(0) },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = 0,
+                    count = 2
+                ),
+                label = { Text(text = "Items") },
             )
             SegmentedButton(
-                selected = homeUiState.buttonIndex == 2,
-                onClick = { viewModel.updateButton(2) },
+                selected = homeUiState.itemsOrCategories == 1,
+                onClick = { viewModel.updateItemsOrCategories(1) },
                 shape = SegmentedButtonDefaults.itemShape(
-                    index = 2,
-                    count = 3
+                    index = 1,
+                    count = 2
                 ),
-                label = { Text(text = "Pie Chart: Items") },
+                label = { Text(text = "Categories") },
             )
         }
-        if (homeUiState.buttonIndex == 0) {
+
+        if (homeUiState.barOrPie == 0 && homeUiState.itemsOrCategories == 0) {
             ItemBarGraph(homeUiState)
         }
-        else if (homeUiState.buttonIndex == 1) {
+        else if (homeUiState.barOrPie == 0 && homeUiState.itemsOrCategories == 1) {
             CategoryBarGraph(homeUiState)
         }
-        else if (homeUiState.buttonIndex == 2) {
+        else if (homeUiState.barOrPie == 1 && homeUiState.itemsOrCategories == 0) {
             ItemPieChart(homeUiState)
+        }
+        else if (homeUiState.barOrPie == 1 && homeUiState.itemsOrCategories == 1) {
+            //PieChart(homeUiState)
         }
 
     }
@@ -99,17 +119,13 @@ fun HomeScreen(
 
 @Composable
 fun ItemBarGraph(
-    homeUiState: HomeUiState
+    homeUiState: HomeUiState,
 ) {
-
     LazyRow(
         verticalAlignment = Alignment.Bottom,
     ) {
-        //Log.i("Max cost", homeUiState.maxCost.toString())
-        Log.i("Item 1 cost", homeUiState.budgetItemList.toString())
-        //Log.i("Item 1 height", ((homeUiState.budgetItemList[0].cost / homeUiState.maxCost) * barGraphMaxHeight).toString())
         items(homeUiState.budgetItemList.size) { index ->
-            val thisHeight = ((homeUiState.budgetItemList[index].cost / homeUiState.maxCost) * barGraphMaxHeight)
+            val thisHeight = ((homeUiState.budgetItemList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
@@ -130,7 +146,7 @@ fun ItemBarGraph(
                 horizontalArrangement = Arrangement.SpaceBetween,) {
                 Text(text = "[" + homeUiState.budgetItemList[index].id.toString() + "]")
                 Text(text = homeUiState.budgetItemList[index].name)
-                Text(text = homeUiState.budgetItemList[index].cost.toString())
+                Text(text = homeUiState.budgetItemList[index].value.toString())
             }
         }
     }
@@ -143,14 +159,12 @@ fun CategoryBarGraph(
     LazyRow(
         verticalAlignment = Alignment.Bottom,
     ) {
-        //Log.i("Max cost", homeUiState.maxCost.toString())
-        Log.i("Item 1 cost", homeUiState.budgetItemList.toString())
-        //Log.i("Item 1 height", ((homeUiState.budgetItemList[0].cost / homeUiState.maxCost) * barGraphMaxHeight).toString())
         items(homeUiState.categoryList.size) { index ->
+            val thisHeight = ((homeUiState.categoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
-                    height = ((homeUiState.categoryList[index].totalCost / homeUiState.maxCategoryTotal) * barGraphMaxHeight).dp
+                    height = thisHeight.dp
                 )
                 .padding(4.dp)
                 .background(Color.LightGray)
@@ -168,7 +182,7 @@ fun CategoryBarGraph(
                 horizontalArrangement = Arrangement.SpaceBetween,) {
                 Text(text = "[" + (index+1).toString() + "]")
                 Text(text = homeUiState.categoryList[index].name)
-                Text(text = homeUiState.categoryList[index].totalCost.toString())
+                Text(text = homeUiState.categoryList[index].totalValue.toString())
             }
         }
     }
@@ -190,7 +204,7 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                 .padding(30.dp)
         ) {
             for (item in homeUiState.budgetItemList) {
-                itemFraction = (item.cost / homeUiState.totalCostOverall * 360.0)
+                itemFraction = ((item.value / homeUiState.totalExpensesValue) * 360.0)
                 drawArc(
                     color = colors[homeUiState.budgetItemList.indexOf(item) % colors.size],
                     startAngle = itemStartAngle.toFloat(),
@@ -210,7 +224,7 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                     Text(text = "[" + homeUiState.budgetItemList[index].id.toString() + "]",
                         color = colors[homeUiState.budgetItemList.indexOf(homeUiState.budgetItemList[index]) % colors.size])
                     Text(text = homeUiState.budgetItemList[index].name)
-                    Text(text = homeUiState.budgetItemList[index].cost.toString())
+                    Text(text = homeUiState.budgetItemList[index].value.toString())
                 }
             }
         }

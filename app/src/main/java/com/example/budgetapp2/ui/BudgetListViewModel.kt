@@ -13,13 +13,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BudgetListViewModel(val application: BudgetApplication): ViewModel() {
+    private val expensesOrIncomes = MutableStateFlow(0)
 
     val budgetListUiState: StateFlow<BudgetListUiState> =
         combine(
-            application.container.repository.getAllItemsStream(),
-            application.container.repository.getAllCategoryNames()
-        ) { budgetItemList, categoryList ->
-            BudgetListUiState(budgetItemList, categoryList)
+            application.container.repository.getAllItems(),
+            application.container.repository.getAllCategoryNames(),
+            expensesOrIncomes
+        ) { budgetItemList, categoryList, expensesOrIncomes ->
+            BudgetListUiState(budgetItemList, categoryList, expensesOrIncomes)
         }
         //application.container.repository.getAllItemsStream().map { BudgetListUiState(it) }
         //application.container.repository.getAllItemsByCategory().map { BudgetListUiState(it) }
@@ -30,14 +32,18 @@ class BudgetListViewModel(val application: BudgetApplication): ViewModel() {
             )
     fun removeItem(item: BudgetItem) {
         viewModelScope.launch {
-            application.container.repository.deleteExpense(item)
+            application.container.repository.deleteItem(item)
         }
+    }
+    fun updateButton(index: Int) {
+        expensesOrIncomes.value = index
     }
 }
 
 
 data class BudgetListUiState(
     val budgetItemList: List<BudgetItem> = listOf(),
-    val categoryList: List<String> = listOf()
+    val categoryList: List<String> = listOf(),
+    val expensesOrIncomes: Int = 0
 )
 //public data class BudgetListUiState(val budgetItemsByCategories: List<List<BudgetItem>> = listOf())

@@ -10,50 +10,49 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BudgetItemDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExpense(expense: BudgetItem)
-
+    suspend fun insertItem(item: BudgetItem)
     @Update
-    suspend fun updateExpense(expense: BudgetItem)
-
+    suspend fun updateItem(item: BudgetItem)
     @Delete
-    suspend fun deleteExpense(expense: BudgetItem)
-
-    @Query("SELECT MAX (amount) FROM expenses")
-    fun getMaxAmount(): Flow<Double>
-
-    @Query("SELECT MAX (cost) FROM expenses")
-    fun getMaxCost(): Flow<Double>
-
-    @Query("SELECT SUM (cost) FROM expenses WHERE category = :category")
-    fun getCategoryCost(category: String): Flow<Double>
-
-    @Query("SELECT MAX (amountPerWeek) FROM expenses")
-    fun getMaxCostPerWeek(): Flow<Double>
+    suspend fun deleteItem(item: BudgetItem)
 
     @Query("SELECT * FROM expenses")
-    fun getAllExpenses(): Flow<List<BudgetItem>>
-
-
-    //@Query("SELECT * FROM expenses GROUP BY category")
-    //fun getAllItemsByCategory(): Flow<List<List<BudgetItem>>>
-
-    @Query("SELECT SUM (cost) FROM expenses")
-    fun getAllExpensesTotal(): Flow<Double>
-
-
-    @Query("SELECT * FROM expenses WHERE category IS NULL")
-    fun getAllItemsWithoutCategories(): Flow<List<BudgetItem>>
-
-    @Query("SELECT DISTINCT category FROM expenses")
-    fun getAllCategories(): Flow<List<String>>
+    fun getAllItems(): Flow<List<BudgetItem>>
+    @Query("SELECT * FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
+    fun getAllExpensesOrIncomes(expenseOrIncome: Int): Flow<List<BudgetItem>>
 
     @Query("SELECT * FROM expenses WHERE id = :id")
     fun getItemById(id: Int): Flow<BudgetItem>
+    @Query("SELECT DISTINCT category FROM expenses")
+    fun getAllCategoryNames(): Flow<List<String>>
+    @Query("SELECT DISTINCT category FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
+    fun getAllExpenseOrIncomeCategoryNames(expenseOrIncome: Int): Flow<List<String>>
 
     @Query("SELECT * FROM expenses WHERE category = :category")
-    fun getExpensesByCategory(category: String): Flow<List<BudgetItem>>
+    fun getAllItemsOfCategory(category: String): Flow<List<BudgetItem>>
+    @Query("SELECT * FROM expenses WHERE category = :category AND expenseOrIncome = :expenseOrIncome")
+    fun getAllExpensesOrIncomesOfCategory(category: String, expenseOrIncome: Int): Flow<List<BudgetItem>>
+    @Query("SELECT * FROM expenses WHERE category IS NULL")
+    fun getAllItemsWithoutCategory(): Flow<List<BudgetItem>>
+    @Query("SELECT * FROM expenses WHERE category IS NULL AND expenseOrIncome = :expenseOrIncome")
+    fun getAllExpensesOrIncomesWithoutCategory(expenseOrIncome: Int): Flow<List<BudgetItem>>
+
+    @Query("SELECT SUM (value) FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
+    fun getTotalValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    @Query("SELECT MAX (value) FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
+    fun getMaxValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    @Query("SELECT SUM (value) FROM expenses WHERE category = :category AND expenseOrIncome = :expenseOrIncome")
+    fun getTotalCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double>
+
+    //no income counterpart because incomes don't have quantity
+    @Query("SELECT MAX (quantity) FROM expenses WHERE expenseOrIncome = 1")
+    fun getMaxExpenseQuantity(): Flow<Double>
 
     @Query("SELECT * FROM expenses WHERE seriesId IS NOT NULL")
-    fun getExpensesWithApiIds(): Flow<List<BudgetItem>>
+    fun getAllExpensesWithApiIds(): Flow<List<BudgetItem>>
+
+    //@Query("SELECT MAX (amountPerWeek) FROM expenses")
+    //fun getMaxCostPerWeek(): Flow<Double>
 }

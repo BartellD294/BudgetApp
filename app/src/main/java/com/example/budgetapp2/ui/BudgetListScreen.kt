@@ -22,6 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -45,111 +48,274 @@ fun BudgetListScreen(
     viewModel: BudgetListViewModel = viewModel(factory = ViewModelProvider.Factory),
     navController: NavController
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var sortBy by remember { mutableStateOf("Name (A-Z)") }
+    //var expanded by remember { mutableStateOf(false) }
+    //var sortBy by remember { mutableStateOf("Name (A-Z)") }
     val budgetListUiState by viewModel.budgetListUiState.collectAsState()
     Column{
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+        SingleChoiceSegmentedButtonRow(modifier = Modifier
+            .padding(1.dp)
+            .fillMaxWidth()
         ) {
-            Column{
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = { expanded = !expanded },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Sort by: $sortBy ▼"
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier
-
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Name (A-Z)") },
-                            onClick = {
-                                sortBy = "Name (A-Z)"
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Name (Z-A)") },
-                            onClick = {
-                                sortBy = "Name (Z-A)"
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Cost (Low to High)") },
-                            onClick = {
-                                sortBy = "Cost (Low to High)"
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Cost (High to Low)") },
-                            onClick = {
-                                sortBy = "Cost (High to Low)"
-                            }
-                        )
-                    }
-                }
-            }
+            SegmentedButton(
+                selected = budgetListUiState.expensesOrIncomes == 0,
+                onClick = { viewModel.updateButton(0) },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = 0,
+                    count = 2
+                ),
+                label = { Text(text = "Expenses") },
+            )
+            SegmentedButton(
+                selected = budgetListUiState.expensesOrIncomes == 1,
+                onClick = { viewModel.updateButton(1) },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = 1,
+                    count = 2
+                ),
+                label = { Text(text = "Incomes") },
+            )
         }
-
-        when (sortBy) {
-            "Name (A-Z)" -> CategoryList(
-                budgetListUiState.budgetItemList
-                    .sortedBy { it.name }
-                    .groupBy { it.category }
-                    .values
-                    .toList(),
-                navController,
-                viewModel)
-            "Name (Z-A)" -> CategoryList(
-                budgetListUiState.budgetItemList
-                    .sortedByDescending { it.name }
-                    .groupBy { it.category }
-                    .values
-                    .toList(),
-                navController,
-                viewModel)
-            "Cost (Low to High)" -> CategoryList(
-                budgetListUiState.budgetItemList
-                    .sortedBy { it.cost }
-                    .groupBy { it.category }
-                    .values
-                    .toList(),
-                navController,
-                viewModel)
-            "Cost (High to Low)" -> CategoryList(
-                budgetListUiState.budgetItemList
-                    .sortedByDescending { it.cost }
-                    .groupBy { it.category }
-                    .values
-                    .toList(),
-                navController,
-                viewModel)
+        if (budgetListUiState.expensesOrIncomes == 0) {
+            ExpensesHeader(0, budgetListUiState, navController, viewModel)
+        }
+        else if (budgetListUiState.expensesOrIncomes == 1) {
+            ExpensesHeader(1, budgetListUiState, navController, viewModel)
         }
     }
 
 }
 
+@Composable
+fun ExpensesHeader(
+    expensesOrIncomes: Int,
+    budgetListUiState: BudgetListUiState,
+    navController: NavController,
+    viewModel: BudgetListViewModel
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var sortBy by remember { mutableStateOf("Name (A-Z)") }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Column{
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Sort by: $sortBy ▼"
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier
+
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Name (A-Z)") },
+                        onClick = {
+                            sortBy = "Name (A-Z)"
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Name (Z-A)") },
+                        onClick = {
+                            sortBy = "Name (Z-A)"
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Cost (Low to High)") },
+                        onClick = {
+                            sortBy = "Cost (Low to High)"
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Cost (High to Low)") },
+                        onClick = {
+                            sortBy = "Cost (High to Low)"
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    when (sortBy) {
+        "Name (A-Z)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .filter {if (expensesOrIncomes == 0) {
+                    it.expenseOrIncome == 0
+                } else {
+                    it.expenseOrIncome == 1
+                }}
+                .sortedBy { it.name }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+        "Name (Z-A)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .filter {if (expensesOrIncomes == 0) {
+                    it.expenseOrIncome == 0
+                } else {
+                    it.expenseOrIncome == 1
+                }}
+                .sortedByDescending { it.name }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+        "Cost (Low to High)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .filter {if (expensesOrIncomes == 0) {
+                    it.expenseOrIncome == 0
+                } else {
+                    it.expenseOrIncome == 1
+                }}
+                .sortedBy { it.value }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+        "Cost (High to Low)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .filter {if (expensesOrIncomes == 0) {
+                    it.expenseOrIncome == 0
+                } else {
+                    it.expenseOrIncome == 1
+                }}
+                .sortedByDescending { it.value }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+    }
+}
+
+@Composable
+fun IncomesHeader(
+    budgetListUiState: BudgetListUiState,
+    navController: NavController,
+    viewModel: BudgetListViewModel
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var sortBy by remember { mutableStateOf("Name (A-Z)") }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Column{
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Sort by: $sortBy ▼"
+                    )
+                }
+            }
+            Box(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier
+
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Name (A-Z)") },
+                        onClick = {
+                            sortBy = "Name (A-Z)"
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Name (Z-A)") },
+                        onClick = {
+                            sortBy = "Name (Z-A)"
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Cost (Low to High)") },
+                        onClick = {
+                            sortBy = "Cost (Low to High)"
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Cost (High to Low)") },
+                        onClick = {
+                            sortBy = "Cost (High to Low)"
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    when (sortBy) {
+        "Name (A-Z)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .sortedBy { it.name }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+        "Name (Z-A)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .sortedByDescending { it.name }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+        "Cost (Low to High)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .sortedBy { it.value }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+        "Cost (High to Low)" -> CategoryList(
+            budgetListUiState.budgetItemList
+                .sortedByDescending { it.value }
+                .groupBy { it.category }
+                .values
+                .toList(),
+            navController,
+            viewModel)
+    }
+}
 
 @Composable
 fun CategoryList(sectionsList: List<List<BudgetItem>>, navController: NavController, viewModel: BudgetListViewModel) {
     Column(modifier = Modifier.fillMaxWidth()) {
         for (i in sectionsList.indices) {
-            ExpandableSection(sectionsList[i], sectionsList[i][0].category, navController, viewModel)
+            sectionsList[i][0].category?.let {
+                ExpandableSection(sectionsList[i],
+                    it, navController, viewModel)
+            }
         }
     }
     //ExpandableSection(sectionsList[0], "Expenses")
@@ -230,7 +396,7 @@ fun ListItem(budgetItem: BudgetItem, navController: NavController, viewModel: Bu
                 //.fillMaxWidth()
             )
             Text(
-                text = amountToCurrency(budgetItem.cost),
+                text = amountToCurrency(budgetItem.value),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                 //.fillMaxWidth()

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.budgetapp2.BudgetApplication
 import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.Category
+
 import com.example.budgetapp2.data.OfflineBudgetItemsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,35 +20,42 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(application: BudgetApplication): ViewModel() {
-    private val buttonIndex = MutableStateFlow(0)
+    private val barOrPieButtonIndex = MutableStateFlow(0)
+    private val itemsOrCategoriesButtonIndex = MutableStateFlow(0)
+    // style = bar graph -> style = 0
+    // style = pie chart -> style = 1
+    // type = items -> type = 0
+    // type = categories -> type = 1
+
 
     //Had to use nested combine()s here because combine() only allows 5 flows directly
     var homeUiState: StateFlow<HomeUiState> =
         combine(
             combine(
-                application.container.repository.getAllItemsStream(),
-                application.container.repository.getAllCategoriesStream(),
-                application.container.repository.getMaxCost(),
-                application.container.repository.getMaxCategoryTotal(),
-                application.container.repository.getAllExpensesTotal(),
-            ) { budgetItemList, categoryList, maxCost, maxCategoryTotal, allExpensesTotal ->
+                application.container.repository.getAllItems(),
+                application.container.repository.getAllCategoriesExpensesOrIncomes(0),
+                application.container.repository.getMaxValueExpensesOrIncomes(0),
+                application.container.repository.getMaxTotalCategoryValueExpenseOrIncome(0),
+                application.container.repository.getTotalValueExpensesOrIncomes(0),
+            ) { budgetItemList, expenseCategoryList, maxExpenseValue, maxExpenseCategoryValueTotal, allExpensesTotal ->
                 CombinedFlow1(
                     budgetItemList,
-                    categoryList,
-                    maxCost,
-                    maxCategoryTotal,
+                    expenseCategoryList,
+                    maxExpenseValue,
+                    maxExpenseCategoryValueTotal,
                     allExpensesTotal
                 )
-            }, buttonIndex
+            }, barOrPieButtonIndex, itemsOrCategoriesButtonIndex
         ) {
-            combined1, buttonIndex ->
+            combined1, barOrPieButtonIndex, itemsOrCategoriesButtonIndex ->
             HomeUiState(
                 budgetItemList = combined1.budgetItemList,
                 categoryList = combined1.categoryList,
-                maxCost = combined1.maxCost,
-                maxCategoryTotal = combined1.maxCategoryTotal,
-                totalCostOverall = combined1.totalCostOverall,
-                buttonIndex = buttonIndex
+                maxItemValue = combined1.maxCost,
+                maxTotalCategoryValue = combined1.maxCategoryTotal,
+                totalExpensesValue = combined1.totalCostOverall,
+                barOrPie = barOrPieButtonIndex,
+                itemsOrCategories = itemsOrCategoriesButtonIndex,
             )
         }.stateIn(
             scope = viewModelScope,
@@ -56,10 +64,12 @@ class HomeViewModel(application: BudgetApplication): ViewModel() {
         )
 
 
-fun updateButton(index: Int) {
-    buttonIndex.value = index
-    //Log.i("button index", buttonIndex.value.toString())
-}
+    fun updateBarOrPie(barOrPie: Int) {
+        barOrPieButtonIndex.value = barOrPie
+    }
+    fun updateItemsOrCategories(itemsOrCategories: Int) {
+        itemsOrCategoriesButtonIndex.value = itemsOrCategories
+    }
 }
 
 data class CombinedFlow1(
@@ -74,8 +84,9 @@ data class CombinedFlow1(
 data class HomeUiState(
     val budgetItemList: List<BudgetItem> = listOf(),
     val categoryList: List<Category> = listOf(),
-    val maxCost: Double = 0.0,
-    val maxCategoryTotal: Double = 0.0,
-    val totalCostOverall: Double = 0.0,
-    val buttonIndex: Int = 0
+    val maxItemValue: Double = 0.0,
+    val maxTotalCategoryValue: Double = 0.0,
+    val totalExpensesValue: Double = 0.0,
+    val barOrPie: Int = 0,
+    val itemsOrCategories: Int = 0
 )
