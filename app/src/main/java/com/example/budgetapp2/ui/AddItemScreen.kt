@@ -26,6 +26,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,8 +54,10 @@ fun AddItemScreen(
             }
         }
     }
+    val expenseUiState by viewModel.expenseUiState.collectAsState()
 
-    val isDropDownExpanded = remember { mutableStateOf(false) }
+    val isFrequencyDropDownExpanded = remember { mutableStateOf(false) }
+    val isCategoryDropDownExpanded = remember { mutableStateOf(false) }
 
 
     Scaffold(
@@ -62,7 +66,7 @@ fun AddItemScreen(
                 .padding(1.dp).fillMaxWidth()
             ) {
                 SegmentedButton(
-                    selected = viewModel.expenseUiState.buttonIndex == 0,
+                    selected = expenseUiState.buttonIndex == 0,
                     onClick = { viewModel.updateButton(0) },
                     shape = SegmentedButtonDefaults.itemShape(
                         index = 0,
@@ -71,7 +75,8 @@ fun AddItemScreen(
                     label = { Text(text = "Expense") },
                 )
                 SegmentedButton(
-                    selected = viewModel.expenseUiState.buttonIndex == 1,
+
+                    selected = expenseUiState.buttonIndex == 1,
                     onClick = { viewModel.updateButton(1) },
                     shape = SegmentedButtonDefaults.itemShape(
                         index = 1,
@@ -106,52 +111,45 @@ fun AddItemScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     OutlinedTextField(
-                        value = viewModel.expenseUiState.name,
+                        value = expenseUiState.name,
                         onValueChange = viewModel::updateName,
                         label = { Text("Item Name") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value = viewModel.expenseUiState.value.toString(),
+                        value = expenseUiState.value.toString(),
                         onValueChange = viewModel::updateValue,
                         label = { Text("Item Cost") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value = viewModel.expenseUiState.quantity,
+                        value = expenseUiState.quantity,
                         onValueChange = viewModel::updateQuantity,
                         label = { Text("Item Amount (per frequency period)") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value = viewModel.expenseUiState.category,
+                        value = expenseUiState.category,
                         onValueChange = viewModel::updateCategory,
                         label = { Text("Item Category") },
                         maxLines = 1,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = viewModel.expenseUiState.frequency.toString(),
-                        onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Expense Frequency") },
                         trailingIcon = {
-                            if (isDropDownExpanded.value) {
+                            if (isCategoryDropDownExpanded.value) {
                                 Icon(Icons.Filled.KeyboardArrowUp,
-                                    contentDescription = "description",
+                                    contentDescription = "Category Open",
                                     Modifier.clickable {
-                                        isDropDownExpanded.value = !isDropDownExpanded.value
+                                        isCategoryDropDownExpanded.value = !isCategoryDropDownExpanded.value
                                     }
                                 )
                             } else {
                                 Icon(Icons.Filled.KeyboardArrowDown,
-                                    contentDescription = "description",
+                                    contentDescription = "Category Closed",
                                     Modifier.clickable {
-                                        isDropDownExpanded.value = !isDropDownExpanded.value
+                                        isCategoryDropDownExpanded.value = !isCategoryDropDownExpanded.value
                                     }
                                 )
                             }
@@ -163,38 +161,64 @@ fun AddItemScreen(
                             .wrapContentSize(Alignment.TopEnd)
                     ) {
                         DropdownMenu(
-                            expanded = isDropDownExpanded.value,
-                            onDismissRequest = { isDropDownExpanded.value = false },
+                            expanded = isCategoryDropDownExpanded.value,
+                            onDismissRequest = { isCategoryDropDownExpanded.value = false }
+                        ) {
+                            for (i in expenseUiState.categoryList.indices) {
+                                DropdownMenuItem(
+                                    text = { Text(expenseUiState.categoryList[i]) },
+                                    onClick = {
+                                        isCategoryDropDownExpanded.value = false
+                                        viewModel.updateCategory(expenseUiState.categoryList[i])
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+
+                    OutlinedTextField(
+                        value = expenseUiState.frequency.toString(),
+                        onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Expense Frequency") },
+                        trailingIcon = {
+                            if (isFrequencyDropDownExpanded.value) {
+                                Icon(Icons.Filled.KeyboardArrowUp,
+                                    contentDescription = "description",
+                                    Modifier.clickable {
+                                        isFrequencyDropDownExpanded.value = !isFrequencyDropDownExpanded.value
+                                    }
+                                )
+                            } else {
+                                Icon(Icons.Filled.KeyboardArrowDown,
+                                    contentDescription = "description",
+                                    Modifier.clickable {
+                                        isFrequencyDropDownExpanded.value = !isFrequencyDropDownExpanded.value
+                                    }
+                                )
+                            }
+                        }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.TopEnd)
+                    ) {
+                        DropdownMenu(
+                            expanded = isFrequencyDropDownExpanded.value,
+                            onDismissRequest = { isFrequencyDropDownExpanded.value = false },
                             //modifier = Modifier.fillMaxWidth()
                         ) {
-                            DropdownMenuItem(
-                                text = { Text("Daily") },
-                                onClick = {
-                                    isDropDownExpanded.value = false
-                                    viewModel.updateFrequency(1)
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Weekly") },
-                                onClick = {
-                                    isDropDownExpanded.value = false
-                                    viewModel.updateFrequency(7)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Monthly") },
-                                onClick = {
-                                    isDropDownExpanded.value = false
-                                    viewModel.updateFrequency(30)
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Yearly") },
-                                onClick = {
-                                    isDropDownExpanded.value = false
-                                    viewModel.updateFrequency(365)
-                                }
-                            )
+                            for (i in frequencyList.indices) {
+                                DropdownMenuItem(
+                                    text = { Text(frequencyList[i].first) },
+                                    onClick = {
+                                        isFrequencyDropDownExpanded.value = false
+                                        viewModel.updateFrequency(frequencyList[i].second)
+                                    }
+                                )
+                            }
                         }
                     }
                     Row (
@@ -205,7 +229,7 @@ fun AddItemScreen(
                     ) {
                         Text("Use API Key?")
                         Checkbox(
-                            checked = viewModel.expenseUiState.useApiKey,
+                            checked = expenseUiState.useApiKey,
                             onCheckedChange = {
                                 viewModel.switchUseApiKey()
                             },
@@ -213,9 +237,9 @@ fun AddItemScreen(
 
                         )
                     }
-                    if (viewModel.expenseUiState.useApiKey) {
+                    if (expenseUiState.useApiKey) {
                         OutlinedTextField(
-                            value = viewModel.expenseUiState.apiKey,
+                            value = expenseUiState.apiKey,
                             onValueChange = viewModel::updateApiKey,
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text("API Key") },
@@ -227,6 +251,13 @@ fun AddItemScreen(
         }
     )
 }
+
+val frequencyList = listOf(
+    Pair("Daily", 1),
+    Pair("Weekly", 7),
+    Pair("Monthly", 31),
+    Pair("Yearly", 365)
+)
 
 @Composable
 fun ItemEntryBox(

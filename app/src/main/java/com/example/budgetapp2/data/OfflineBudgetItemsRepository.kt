@@ -15,37 +15,56 @@ class OfflineBudgetItemsRepository(
 
     override suspend fun insertItem(item: BudgetItem) =
         budgetItemDao.insertItem(item)
+
     override suspend fun updateItem(item: BudgetItem) =
         budgetItemDao.updateItem(item)
+
     override suspend fun deleteItem(item: BudgetItem) =
         budgetItemDao.deleteItem(item)
 
     override fun getAllItems(): Flow<List<BudgetItem>> =
         budgetItemDao.getAllItems()
+
     override fun getAllExpensesOrIncomes(expenseOrIncome: Int): Flow<List<BudgetItem>> =
         budgetItemDao.getAllExpensesOrIncomes(expenseOrIncome)
 
     override fun getItemById(id: Int): Flow<BudgetItem> =
         budgetItemDao.getItemById(id)
+
     override fun getAllCategoryNames(): Flow<List<String>> =
         budgetItemDao.getAllCategoryNames()
+
     override fun getAllExpenseOrIncomeCategoryNames(expenseOrIncome: Int): Flow<List<String>> =
         budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome)
 
+    override fun getAllSubcategoryNamesOfCategory(category: String): Flow<List<String>> =
+        budgetItemDao.getAllSubcategoryNamesOfCategory(category)
+
     override fun getAllItemsOfCategory(category: String): Flow<List<BudgetItem>> =
         budgetItemDao.getAllItemsOfCategory(category)
-    override fun getAllExpensesOrIncomesOfCategory(category: String, expenseOrIncome: Int): Flow<List<BudgetItem>> =
+
+    override fun getAllExpensesOrIncomesOfCategory(
+        category: String,
+        expenseOrIncome: Int
+    ): Flow<List<BudgetItem>> =
         budgetItemDao.getAllExpensesOrIncomesOfCategory(category, expenseOrIncome)
+
     override fun getAllItemsWithoutCategory(): Flow<List<BudgetItem>> =
         budgetItemDao.getAllItemsWithoutCategory()
+
     override fun getAllExpensesOrIncomesWithoutCategory(expenseOrIncome: Int): Flow<List<BudgetItem>> =
         budgetItemDao.getAllExpensesOrIncomesWithoutCategory(expenseOrIncome)
 
     override fun getTotalValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getTotalValueExpensesOrIncomes(expenseOrIncome)
+
     override fun getMaxValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getMaxValueExpensesOrIncomes(expenseOrIncome)
-    override fun getTotalCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double> =
+
+    override fun getTotalCategoryValueExpensesOrIncomes(
+        category: String,
+        expenseOrIncome: Int
+    ): Flow<Double> =
         budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
 
     override fun getMaxExpenseQuantity(): Flow<Double> =
@@ -57,7 +76,8 @@ class OfflineBudgetItemsRepository(
     override fun getMaxTotalCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome).map { categoryList ->
             categoryList.map { category ->
-                budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome).first()
+                budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
+                    .first()
             }.maxOrNull() ?: 0.0
         }
 
@@ -85,11 +105,23 @@ class OfflineBudgetItemsRepository(
     override fun getAllCategoriesExpensesOrIncomes(expenseOrIncome: Int): Flow<List<Category>> {
         return budgetItemDao.getAllCategoryNames().map { categoryList ->
             categoryList.map { category ->
-                val totalValue = budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome).first()
-                Category(category, totalValue)
+                val totalValue =
+                    budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
+                        .first()
+                Category(category, totalValue) // getAllSubcategoriesOfCategory(category).first())
+            }
+        }
+    }
+
+    override suspend fun getAllSubcategoriesOfCategory(category: String): Flow<List<Subcategory>> {
+        return budgetItemDao.getAllSubcategoryNamesOfCategory(category).map { subcategoryList ->
+            subcategoryList.map { subcategory ->
+                Subcategory(subcategory)
             }
         }
     }
 }
 
-data class Category(val name: String, val totalValue: Double)
+data class Category(val name: String, val totalValue: Double, val subcategories: List<Subcategory> = listOf())
+
+data class Subcategory(val name: String = "")
