@@ -50,6 +50,9 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
     private val apiKey = MutableStateFlow("")
     private val categoryList: MutableStateFlow<List<Category>> =
         MutableStateFlow(emptyList())
+    private val subcategoryList: MutableStateFlow<List<Subcategory>> =
+        MutableStateFlow(emptyList())
+
     var expenseUiState: StateFlow<ExpenseUiState> =
         combine(
             combine(
@@ -66,8 +69,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
                     category, subcategory, frequency, useApiKey, apiKey
                 )
             },
-            categoryList
-        ) { combined1, combined2, categoryList ->
+            categoryList, subcategoryList
+        ) { combined1, combined2, categoryList, subcategoryList ->
             ExpenseUiState(
                 id = combined1.id,
                 buttonIndex = combined1.buttonIndex,
@@ -79,7 +82,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
                 frequency = combined2.frequency,
                 useApiKey = combined2.useApiKey,
                 apiKey = combined2.apiKey,
-                categoryList = categoryList.map { it.name }
+                categoryList = categoryList,
+                subcategoryList = subcategoryList
             )
         }.stateIn(
             scope = viewModelScope,
@@ -93,6 +97,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
             updateCategoryList(
                 application.container.repository.getAllCategoriesExpensesOrIncomes(buttonIndex.value).first()
             )
+            updateSubcategoryList(category.value)
         }
     }
 
@@ -113,6 +118,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         updateApiKey(budgetItem.seriesId ?: "")
 
         updateCategoryList(application.container.repository.getAllCategoriesExpensesOrIncomes(buttonIndex.value).first())
+        updateSubcategoryList(category.value)
     }
 
     fun updateId(newId: Int)
@@ -126,7 +132,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
     fun updateQuantity(newQuantity: String)
         { quantity.value = newQuantity }
     fun updateCategory(newCategory: String)
-        { category.value = newCategory }
+        { category.value = newCategory
+    updateSubcategoryList(category.value)}
     fun updateSubcategory(newSubcategory: String)
         { subcategory.value = newSubcategory }
     fun updateFrequency(newFrequency: Int)
@@ -137,7 +144,20 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         { apiKey.value = newApiKey }
 
     fun updateCategoryList(newCategoryList: List<Category>)
-        { categoryList.value = newCategoryList }
+        { categoryList.value = newCategoryList
+            updateSubcategoryList(category.value)
+    }
+
+    fun updateSubcategoryList(category: String) {
+        val newSubcategoryList = mutableListOf<Subcategory>()
+        for (i in categoryList.value.indices) {
+            if (categoryList.value[i].name == category) {
+                newSubcategoryList.addAll(categoryList.value[i].subcategories)
+            }
+        }
+        subcategoryList.value = newSubcategoryList
+        Log.i("Subcategory List", subcategoryList.value.toString())
+    }
 
     fun switchUseApiKey() {
         if (useApiKey.value) { apiKey.value = "" }
@@ -161,7 +181,8 @@ data class ExpenseUiState(
     val frequency: Int = 0,
     val useApiKey: Boolean = false,
     val apiKey: String = "",
-    val categoryList: List<String> = listOf()
+    val categoryList: List<Category> = listOf(),
+    val subcategoryList: List<Subcategory> = listOf()
 )
 
 fun ExpenseUiState.toExpense(): BudgetItem {

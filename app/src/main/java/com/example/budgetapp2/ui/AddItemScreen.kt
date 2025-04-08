@@ -1,5 +1,6 @@
 package com.example.budgetapp2.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgetapp2.data.Subcategory
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -58,6 +60,8 @@ fun AddItemScreen(
 
     val isFrequencyDropDownExpanded = remember { mutableStateOf(false) }
     val isCategoryDropDownExpanded = remember { mutableStateOf(false) }
+    val isSubcategoryDropDownExpanded = remember { mutableStateOf(false) }
+    val subcategoryList = remember { mutableStateOf(listOf<Subcategory>()) }
 
 
     Scaffold(
@@ -110,6 +114,7 @@ fun AddItemScreen(
                         .padding(10.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    //Name field
                     OutlinedTextField(
                         value = expenseUiState.name,
                         onValueChange = viewModel::updateName,
@@ -117,6 +122,7 @@ fun AddItemScreen(
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    //Value field
                     OutlinedTextField(
                         value = expenseUiState.value.toString(),
                         onValueChange = viewModel::updateValue,
@@ -124,6 +130,7 @@ fun AddItemScreen(
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    //Quantity field
                     OutlinedTextField(
                         value = expenseUiState.quantity,
                         onValueChange = viewModel::updateQuantity,
@@ -131,6 +138,7 @@ fun AddItemScreen(
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    //Category field
                     OutlinedTextField(
                         value = expenseUiState.category,
                         onValueChange = viewModel::updateCategory,
@@ -155,6 +163,7 @@ fun AddItemScreen(
                             }
                         }
                     )
+                    //Category dropdown menu
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -166,17 +175,74 @@ fun AddItemScreen(
                         ) {
                             for (i in expenseUiState.categoryList.indices) {
                                 DropdownMenuItem(
-                                    text = { Text(expenseUiState.categoryList[i]) },
+                                    text = { Text(expenseUiState.categoryList[i].name) },
                                     onClick = {
+                                        Log.i("Category", "Clicked")
                                         isCategoryDropDownExpanded.value = false
-                                        viewModel.updateCategory(expenseUiState.categoryList[i])
+                                        viewModel.updateCategory(expenseUiState.categoryList[i].name)
                                     }
                                 )
                             }
                         }
                     }
 
+                    //Subcategory field
+                    OutlinedTextField(
+                        enabled = expenseUiState.category.isNotEmpty(),
+                        value = expenseUiState.subcategory,
+                        onValueChange = viewModel::updateSubcategory,
+                        label = { Text("Item Subcategory") },
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth(),
+                        trailingIcon = {
+                            if (isSubcategoryDropDownExpanded.value) {
+                                Icon(Icons.Filled.KeyboardArrowUp,
+                                    contentDescription = "Subcategory Open",
+                                    Modifier.clickable {
+                                        isSubcategoryDropDownExpanded.value = !isSubcategoryDropDownExpanded.value
+                                    }
+                                )
+                            } else {
+                                Icon(Icons.Filled.KeyboardArrowDown,
+                                    contentDescription = "Subcategory Closed",
+                                    Modifier.clickable {
+                                        isSubcategoryDropDownExpanded.value = !isSubcategoryDropDownExpanded.value
+                                    }
+                                )
+                            }
+                        }
+                    )
+                    //Subcategory dropdown menu
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.TopEnd)
+                    ) {
+                        DropdownMenu(
+                            expanded = isSubcategoryDropDownExpanded.value,
+                            onDismissRequest = { isSubcategoryDropDownExpanded.value = false }
+                        ) {
+//                            for (i in expenseUiState.categoryList.indices) {
+//                                if (expenseUiState.categoryList[i].name == expenseUiState.category) {
+//                                    subcategoryList.value = expenseUiState.categoryList[i].subcategories
+//                                }
+//                            }
+//                            for (i in subcategoryList.value.indices) {}
+                            for (i in expenseUiState.subcategoryList.indices) {
+                                DropdownMenuItem(
+                                    text = { Text(expenseUiState.subcategoryList[i].name) },
+                                    onClick = {
+                                        isSubcategoryDropDownExpanded.value = false
+                                        viewModel.updateSubcategory(expenseUiState.subcategoryList[i].name)
+                                    }
+                                )
+                            }
 
+                        }
+                    }
+
+
+                    //Frequency field
                     OutlinedTextField(
                         value = expenseUiState.frequency.toString(),
                         onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
@@ -200,6 +266,7 @@ fun AddItemScreen(
                             }
                         }
                     )
+                    //Frequency dropdown menu
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -221,6 +288,7 @@ fun AddItemScreen(
                             }
                         }
                     }
+                    //API ID checkbox and field
                     Row (
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

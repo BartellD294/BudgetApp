@@ -37,8 +37,8 @@ class OfflineBudgetItemsRepository(
     override fun getAllExpenseOrIncomeCategoryNames(expenseOrIncome: Int): Flow<List<String>> =
         budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome)
 
-    override fun getAllSubcategoryNamesOfCategory(category: String): Flow<List<String>> =
-        budgetItemDao.getAllSubcategoryNamesOfCategory(category)
+    override fun getAllNotNullSubcategoryNamesOfCategory(category: String): Flow<List<String>> =
+        budgetItemDao.getAllNotNullSubcategoryNamesOfCategory(category)
 
     override fun getAllItemsOfCategory(category: String): Flow<List<BudgetItem>> =
         budgetItemDao.getAllItemsOfCategory(category)
@@ -108,15 +108,15 @@ class OfflineBudgetItemsRepository(
                 val totalValue =
                     budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                         .first()
-                Category(category, totalValue) // getAllSubcategoriesOfCategory(category).first())
+                Category(category, totalValue, getAllSubcategoriesOfCategory(category).first()) // getAllSubcategoriesOfCategory(category).first())
             }
         }
     }
 
-    override suspend fun getAllSubcategoriesOfCategory(category: String): Flow<List<Subcategory>> {
-        return budgetItemDao.getAllSubcategoryNamesOfCategory(category).map { subcategoryList ->
-            subcategoryList.map { subcategory ->
-                Subcategory(subcategory)
+    override fun getAllSubcategoriesOfCategory(category: String): Flow<List<Subcategory>> {
+        return budgetItemDao.getAllNotNullSubcategoryNamesOfCategory(category).map { subcategoryNames ->
+            subcategoryNames.map { subcategoryName ->
+                Subcategory(subcategoryName)
             }
         }
     }

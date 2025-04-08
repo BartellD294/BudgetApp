@@ -18,6 +18,8 @@ sealed class Screen(val route: String, val title: String) {
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // -- Only uncomment this for debugging (if/when schema has been changed) --
         //this.deleteDatabase("budget_item_database")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

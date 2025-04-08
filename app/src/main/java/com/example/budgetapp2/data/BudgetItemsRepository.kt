@@ -14,7 +14,7 @@ interface BudgetItemsRepository {
     fun getItemById(id: Int): Flow<BudgetItem>
     fun getAllCategoryNames(): Flow<List<String>>
     fun getAllExpenseOrIncomeCategoryNames(expenseOrIncome: Int): Flow<List<String>>
-    fun getAllSubcategoryNamesOfCategory(category: String): Flow<List<String>>
+    fun getAllNotNullSubcategoryNamesOfCategory(category: String): Flow<List<String>>
 
     fun getAllItemsOfCategory(category: String): Flow<List<BudgetItem>>
     fun getAllExpensesOrIncomesOfCategory(category: String, expenseOrIncome: Int): Flow<List<BudgetItem>>
@@ -33,7 +33,7 @@ interface BudgetItemsRepository {
 
     //These are only in OfflineBudgetItemsRepository (not direct DAO calls)
     fun getAllCategoriesExpensesOrIncomes(expenseOrIncome: Int): Flow<List<Category>>
-    suspend fun getAllSubcategoriesOfCategory(category: String): Flow<List<Subcategory>>
+    fun getAllSubcategoriesOfCategory(category: String): Flow<List<Subcategory>>
 
     fun getMaxTotalCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double>
     suspend fun updateItemsWithApiIds()

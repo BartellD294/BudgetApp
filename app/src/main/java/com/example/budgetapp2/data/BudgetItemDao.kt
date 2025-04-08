@@ -29,8 +29,8 @@ interface BudgetItemDao {
     fun getAllCategoryNames(): Flow<List<String>>
     @Query("SELECT DISTINCT category FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
     fun getAllExpenseOrIncomeCategoryNames(expenseOrIncome: Int): Flow<List<String>>
-    @Query("SELECT DISTINCT subcategory FROM expenses WHERE category = :category")
-    fun getAllSubcategoryNamesOfCategory(category: String): Flow<List<String>>
+    @Query("SELECT DISTINCT subcategory FROM expenses WHERE category = :category AND subcategory IS NOT NULL")
+    fun getAllNotNullSubcategoryNamesOfCategory(category: String): Flow<List<String>>
 
     @Query("SELECT * FROM expenses WHERE category = :category")
     fun getAllItemsOfCategory(category: String): Flow<List<BudgetItem>>
