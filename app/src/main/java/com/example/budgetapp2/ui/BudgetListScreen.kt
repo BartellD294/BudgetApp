@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -382,54 +383,73 @@ fun ListItem(budgetItem: BudgetItem, navController: NavController, viewModel: Bu
             .padding(2.dp)
             .fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = budgetItem.name,
-                style = MaterialTheme.typography.headlineMedium,
+        Column {
+            Row(
                 modifier = Modifier
-                //.fillMaxWidth()
-            )
-            Text(
-                text = amountToCurrency(budgetItem.value),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                //.fillMaxWidth()
-            )
-            Button(
-                onClick = {
-                    viewModel.removeItem(budgetItem)
-                }
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    Icons.Rounded.Delete,
-                    contentDescription = "Delete Item",
+                Text(
+                    text = budgetItem.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                    //.fillMaxWidth()
                 )
-            }
-
-            Button(
-                onClick = {
-                    navController.navigate(
-                        "EditItem/${budgetItem.id}") {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                Text(
+                    text = amountToCurrency(budgetItem.value),
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                    //.fillMaxWidth()
+                )
+                Button(
+                    onClick = {
+                        viewModel.removeItem(budgetItem)
                     }
+                ) {
+                    Icon(
+                        Icons.Rounded.Delete,
+                        contentDescription = "Delete Item",
+                    )
                 }
-            ) {
-                Icon(
-                    Icons.Rounded.Edit,
-                    contentDescription = "Edit Item",
-                )
             }
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Quantity: " + budgetItem.quantity.toString(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier
+                //.fillMaxWidth()
+                )
+                Text(
+                    text = "Frequency: " + budgetItem.frequency.toString(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier
+                //.fillMaxWidth()
+                )
+                Button(
+                    onClick = {
+                        navController.navigate(
+                            "EditItem/${budgetItem.id}"
+                        ) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                ) {
+                    Icon(
+                        Icons.Rounded.Edit,
+                        contentDescription = "Edit Item",
+                    )
+                }
+            }
         }
     }
 }
