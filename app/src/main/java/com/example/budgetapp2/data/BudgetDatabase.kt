@@ -35,6 +35,7 @@ abstract class BudgetDatabase : RoomDatabase() {
                         "budget_item_database"
                     )
                         .createFromFile(file)
+                        .fallbackToDestructiveMigration()
                         .build()
                         .also { Instance = it }
                 }
