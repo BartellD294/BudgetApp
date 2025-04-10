@@ -30,35 +30,39 @@ class AppDataContainer(
     var database: BudgetDatabase? = BudgetDatabase.getDatabase(application)
     /* override */ var repository: BudgetItemsRepository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
 
-    fun getDatabase(context: Context = application): BudgetDatabase {
-        return database ?: synchronized(this) {
-            database ?: createDatabase(context).also {database = it}
-        }
-    }
+//    fun getDatabase(context: Context = application): BudgetDatabase {
+//        return database ?: synchronized(this) {
+//            database ?: createDatabase(context).also {database = it}
+//        }
+//    }
 
-    fun createDatabase(context: Context): BudgetDatabase {
-        return Room.databaseBuilder(
-            context,
-            BudgetDatabase::class.java,
-            "budget_item_database"
-        ).build()
-    }
+//    fun createDatabase(context: Context): BudgetDatabase {
+//        return Room.databaseBuilder(
+//            context,
+//            BudgetDatabase::class.java,
+//            "budget_item_database"
+//        ).build()
+//    }
 
-    fun updateDatabase(file: File) {
-
+    fun updateDatabase(file: File? = null) {
         Log.i("update database", "update database")
         database = BudgetDatabase.getDatabase(application, file)
-        repository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
 
+    }
+    fun deleteDatabase() {
+        application.deleteDatabase("budget_item_database")
     }
 
     fun updateRepository() {
         repository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
     }
-
-    fun resetDatabase(context: Context) {
+    fun closeDatabase() {
         database!!.close()
-        database = createDatabase(context)
-
     }
+
+//    fun resetDatabase(context: Context) {
+//        database!!.close()
+//        database = createDatabase(context)
+//
+//    }
 }

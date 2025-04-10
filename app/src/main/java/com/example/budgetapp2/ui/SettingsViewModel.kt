@@ -13,13 +13,14 @@ import androidx.room.RoomDatabase
 import com.example.budgetapp2.BudgetApplication
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
 import java.io.Serializable
 
 
 class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serializable {
     var optionsUiState by mutableStateOf(OptionsUiState(0, null, null))
-    var import_uri by mutableStateOf<Uri?>(null)
-    var export_uri by mutableStateOf<Uri?>(null)
+    var importUri by mutableStateOf<Uri?>(null)
+    var exportUri by mutableStateOf<Uri?>(null)
     fun updateButton(index: Int) {
         optionsUiState = optionsUiState.copy(buttonIndex = index)
     }
@@ -32,14 +33,14 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
     }
     fun updateImportUri(uri: Uri) {
         Log.i("destination button uri", uri.toString())
-        import_uri = uri
+        importUri = uri
     }
     fun updateExportUri(uri: Uri) {
-        export_uri = uri
+        exportUri = uri
     }
     fun resetDestinations() {
-        import_uri = null
-        export_uri = null
+        importUri = null
+        exportUri = null
     }
 
     fun updateApis() {
@@ -48,30 +49,45 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
         }
     }
 
+    // ContentResolver (ContentResolver.openInputStream(Uri)):
+    // https://developer.android.com/reference/android/content/ContentResolver#openInputStream(android.net.Uri)
+    // Using input stream:
+    // https://developer.android.com/reference/java/io/InputStream
     fun importDatabase(context: Context) {
-        Log.i("start import uri", import_uri!!.path.toString())
-        val file = File(import_uri!!.path!!)
-        val dbPath = context.getDatabasePath("budget_item_database")
-        Log.i("db path", dbPath.toString())
-        application.container.getDatabase(context).close()
-        file.copyTo(dbPath, overwrite = true)
+        val tempFile = File.createTempFile("imported_database", ".db")
 
-        application.container.resetDatabase(context)
+        Log.i("start import uri", importUri.toString())
+        Log.i("start import uri path", importUri!!.path.toString())
+        val contentResolver = context.contentResolver
+        val inputStream = contentResolver.openInputStream(importUri!!)
+        //val outputStream = contentResolver.openOutputStream(exportUri!!)
+        val dbFile = context.getDatabasePath("budget_item_database")
+        application.container.closeDatabase()
+        inputStream?.use { input ->
+            FileOutputStream(dbFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+        //Log.i("imported temp file", tempFile.toString())
 
+
+        //application.container.deleteDatabase()
+        application.container.updateDatabase()
+        //application.container.resetDatabase(context)
         application.container.updateRepository()
     }
+
     fun exportDatabase(context: Context) {
-        writeFileToUri(export_uri!!, context)
-    }
-
-}
-
-
-fun openFile(pickerInitialUri: Uri) {
-    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        addCategory(Intent.CATEGORY_OPENABLE)
-        type = "application/pdf"
-
+        application.container.closeDatabase()
+        val outputStream = context.contentResolver.openOutputStream(exportUri!!)
+        val inputStream = context.getDatabasePath("budget_item_database").inputStream()
+        inputStream.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output!!)
+            }
+        }
+        application.container.updateDatabase()
+        application.container.updateRepository()
     }
 
 }
