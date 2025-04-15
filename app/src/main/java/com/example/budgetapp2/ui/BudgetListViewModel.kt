@@ -1,5 +1,6 @@
 package com.example.budgetapp2.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.budgetapp2.BudgetApplication
@@ -14,14 +15,39 @@ import kotlinx.coroutines.launch
 
 class BudgetListViewModel(val application: BudgetApplication): ViewModel() {
     private val expensesOrIncomes = MutableStateFlow(0)
+    private val showQuantity = MutableStateFlow(true)
+    private val showFrequency = MutableStateFlow(false)
+    private val showCostPerWeek = MutableStateFlow(false)
+    private val numFilters = MutableStateFlow(1)
 
     val budgetListUiState: StateFlow<BudgetListUiState> =
         combine(
+            combine(
+                showQuantity,
+                showFrequency,
+                showCostPerWeek,
+                numFilters
+            ) {
+              showQuantity, showFrequency, showCostPerWeek, numFilters ->
+                CombinedFilterFlow(
+                    showQuantity,
+                    showFrequency,
+                    showCostPerWeek,
+                    numFilters
+                )
+            },
             application.container.repository.getAllItems(),
             application.container.repository.getAllCategoryNames(),
             expensesOrIncomes
-        ) { budgetItemList, categoryList, expensesOrIncomes ->
-            BudgetListUiState(budgetItemList, categoryList, expensesOrIncomes)
+        ) { filter, budgetItemList, categoryList, expensesOrIncomes->
+            BudgetListUiState(
+                budgetItemList,
+                categoryList,
+                expensesOrIncomes,
+                filter.showQuantity,
+                filter.showFrequency,
+                filter.showCostPerWeek,
+                filter.numFilters)
         }
         //application.container.repository.getAllItemsStream().map { BudgetListUiState(it) }
         //application.container.repository.getAllItemsByCategory().map { BudgetListUiState(it) }
@@ -38,12 +64,48 @@ class BudgetListViewModel(val application: BudgetApplication): ViewModel() {
     fun updateButton(index: Int) {
         expensesOrIncomes.value = index
     }
+
+    fun updateShowQuantity(checked: Boolean) {
+        showQuantity.value = checked
+        updateNumFilters()
+    }
+    fun updateShowFrequency(checked: Boolean) {
+        showFrequency.value = checked
+        updateNumFilters()
+    }
+    fun updateShowCostPerWeek(checked: Boolean) {
+        showCostPerWeek.value = checked
+        updateNumFilters()
+    }
+    fun updateNumFilters() {
+        var num: Int = 0
+        if (showQuantity.value) {
+            num++
+        }
+        if (showFrequency.value) {
+            num++
+            }
+        if (showCostPerWeek.value) {
+            num++
+        }
+        numFilters.value = num
+    }
 }
 
+data class CombinedFilterFlow(
+    val showQuantity: Boolean,
+    val showFrequency: Boolean,
+    val showCostPerWeek: Boolean,
+    val numFilters: Int
+)
 
 data class BudgetListUiState(
     val budgetItemList: List<BudgetItem> = listOf(),
     val categoryList: List<String> = listOf(),
-    val expensesOrIncomes: Int = 0
+    val expensesOrIncomes: Int = 0,
+    val showQuantity: Boolean = true,
+    val showFrequency: Boolean = false,
+    val showCostPerWeek: Boolean = false,
+    val numFilters: Int = 1
 )
 //public data class BudgetListUiState(val budgetItemsByCategories: List<List<BudgetItem>> = listOf())

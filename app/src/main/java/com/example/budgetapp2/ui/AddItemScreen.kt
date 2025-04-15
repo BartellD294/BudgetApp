@@ -52,6 +52,7 @@ fun AddItemScreen(
             coroutineScope {
                 launch {
                     viewModel.updateUiStateById(id.toInt())
+                    // button name = "Update Item"
                 }
             }
         }
@@ -126,7 +127,7 @@ fun AddItemScreen(
                     OutlinedTextField(
                         value = expenseUiState.value.toString(),
                         onValueChange = viewModel::updateValue,
-                        label = { Text("Item Cost") },
+                        label = { Text("Item Value (per 1 item)") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -134,7 +135,7 @@ fun AddItemScreen(
                     OutlinedTextField(
                         value = expenseUiState.quantity,
                         onValueChange = viewModel::updateQuantity,
-                        label = { Text("Item Amount (per frequency period)") },
+                        label = { Text("Item Quantity (per frequency period)") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -145,6 +146,7 @@ fun AddItemScreen(
                         label = { Text("Item Category") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth(),
+
                         trailingIcon = {
                             if (isCategoryDropDownExpanded.value) {
                                 Icon(Icons.Filled.KeyboardArrowUp,

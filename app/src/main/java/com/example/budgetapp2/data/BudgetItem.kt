@@ -39,7 +39,7 @@ data class BudgetItem(
     val seriesId: String? = null
 )
 
-public fun amountToCurrency(amount: Double): String {
+public fun valueToCurrency(amount: Double): String {
     return NumberFormat.getCurrencyInstance(Locale.US).format(amount)
 }
 
