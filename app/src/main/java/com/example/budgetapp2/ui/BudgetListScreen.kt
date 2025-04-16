@@ -104,19 +104,34 @@ fun ListHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
-        Row() {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                FilterButton(
+                    filterExpanded,
+                    budgetListUiState,
+                    viewModel
+                )
+                UpdateApisButton(
+                    viewModel
+                )
+            }
+
             SortByButton(
                 sortExpanded,
                 sortBy
             )
-            FilterButton(
-                filterExpanded,
-                budgetListUiState,
-                viewModel
-            )
         }
+
+
 
     }
 
@@ -149,7 +164,7 @@ fun ListHeader(
             navController,
             viewModel,
             budgetListUiState)
-        "Cost (Low to High)" -> CategoryList(
+        "Value (Low to High)" -> CategoryList(
             budgetListUiState.budgetItemList
                 .filter {if (expensesOrIncomes == 0) {
                     it.expenseOrIncome == 0
@@ -163,7 +178,7 @@ fun ListHeader(
             navController,
             viewModel,
             budgetListUiState)
-        "Cost (High to Low)" -> CategoryList(
+        "Value (High to Low)" -> CategoryList(
             budgetListUiState.budgetItemList
                 .filter {if (expensesOrIncomes == 0) {
                     it.expenseOrIncome == 0
@@ -185,14 +200,16 @@ fun SortByButton(
     expanded: MutableState<Boolean>,
     sortBy: MutableState<String>,
 ) {
-    Column{
+    Column(
+        modifier = Modifier.width(300.dp),
+    ){
         Row(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 onClick = { expanded.value = !expanded.value },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.width(300.dp)
             ) {
                 Text(
                     text = "Sort by: ${sortBy.value} ▼"
@@ -243,7 +260,9 @@ fun FilterButton(
     budgetListUiState: BudgetListUiState,
     viewModel: BudgetListViewModel
 ) {
-    Column {
+    Column(
+        modifier = Modifier.width(200.dp),
+    ) {
         Button(
             onClick = { expanded.value = !expanded.value },
             modifier = Modifier.width(200.dp)
@@ -319,6 +338,20 @@ fun FilterButton(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun UpdateApisButton(
+    viewModel: BudgetListViewModel
+) {
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            viewModel.updateApis()
+        }
+    ) {
+        Text(text = "Update APIs")
     }
 }
 

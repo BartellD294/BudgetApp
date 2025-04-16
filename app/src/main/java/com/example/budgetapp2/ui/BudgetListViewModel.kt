@@ -90,6 +90,11 @@ class BudgetListViewModel(val application: BudgetApplication): ViewModel() {
         }
         numFilters.value = num
     }
+    fun updateApis() {
+        viewModelScope.launch {
+            application.container.repository.updateItemsWithApiIds()
+        }
+    }
 }
 
 data class CombinedFilterFlow(
