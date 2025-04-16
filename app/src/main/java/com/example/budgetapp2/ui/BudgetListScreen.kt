@@ -1,5 +1,6 @@
 package com.example.budgetapp2.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -85,129 +86,6 @@ fun BudgetListScreen(
         }
     }
 
-}
-
-@Composable
-fun SortByButton(
-    expanded: MutableState<Boolean>,
-    sortBy: MutableState<String>,
-) {
-    Column{
-        Row(
-            modifier = Modifier.width(200.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = { expanded.value = !expanded.value },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Sort by: ${sortBy.value} ▼"
-                )
-            }
-        }
-        Box(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            DropdownMenu(
-                expanded = expanded.value,
-                onDismissRequest = { expanded.value = false },
-                modifier = Modifier
-
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Name (A-Z)") },
-                    onClick = {
-                        sortBy.value = "Name (A-Z)"
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Name (Z-A)") },
-                    onClick = {
-                        sortBy.value = "Name (Z-A)"
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Value (Low to High)") },
-                    onClick = {
-                        sortBy.value = "Value (Low to High)"
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Value (High to Low)") },
-                    onClick = {
-                        sortBy.value = "Value (High to Low)"
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun FilterButton(
-    expanded: MutableState<Boolean>,
-    budgetListUiState: BudgetListUiState,
-    viewModel: BudgetListViewModel
-) {
-    Column {
-        Button(
-            onClick = { expanded.value = !expanded.value },
-            modifier = Modifier.width(200.dp)
-        ) {
-            Text(
-                text = "Filter: ▼"
-            )
-        }
-        Box(
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            DropdownMenu(
-                expanded = expanded.value,
-                onDismissRequest = { expanded.value = false },
-                modifier = Modifier
-            ) {
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("Quantity")
-                            Checkbox(
-                                checked = budgetListUiState.showQuantity,
-                                onCheckedChange = {
-                                    viewModel.updateShowQuantity(it)
-                                }
-                            )
-                        }
-                    },
-                    onClick = {
-                        viewModel.updateShowQuantity(!budgetListUiState.showQuantity)
-                    }
-                )
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("Frequency")
-                            Checkbox(
-                                checked = budgetListUiState.showFrequency,
-                                onCheckedChange = {
-                                    viewModel.updateShowFrequency(it)
-                                }
-                            )
-                        }
-                    },
-                    onClick = {
-                        viewModel.updateShowFrequency(!budgetListUiState.showFrequency)
-                    }
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -303,26 +181,150 @@ fun ListHeader(
 }
 
 @Composable
-fun CategoryList(sectionsList: List<List<BudgetItem>>,
-                 navController: NavController,
-                 viewModel: BudgetListViewModel,
-                 budgetListUiState: BudgetListUiState
+fun SortByButton(
+    expanded: MutableState<Boolean>,
+    sortBy: MutableState<String>,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        for (i in sectionsList.indices) {
-            sectionsList[i][0].category?.let {
-                ExpandableSection(
-                    sectionsList[i],
-                    it,
-                    navController,
-                    viewModel,
-                    budgetListUiState
+    Column{
+        Row(
+            modifier = Modifier.width(200.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = { expanded.value = !expanded.value },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Sort by: ${sortBy.value} ▼"
+                )
+            }
+        }
+        Box(
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false },
+                modifier = Modifier
+
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Name (A-Z)") },
+                    onClick = {
+                        sortBy.value = "Name (A-Z)"
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Name (Z-A)") },
+                    onClick = {
+                        sortBy.value = "Name (Z-A)"
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Value (Low to High)") },
+                    onClick = {
+                        sortBy.value = "Value (Low to High)"
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Value (High to Low)") },
+                    onClick = {
+                        sortBy.value = "Value (High to Low)"
+                    }
                 )
             }
         }
     }
-    //ExpandableSection(sectionsList[0], "Expenses")
 }
+
+@Composable
+fun FilterButton(
+    expanded: MutableState<Boolean>,
+    budgetListUiState: BudgetListUiState,
+    viewModel: BudgetListViewModel
+) {
+    Column {
+        Button(
+            onClick = { expanded.value = !expanded.value },
+            modifier = Modifier.width(200.dp)
+        ) {
+            Text(
+                text = "Filter ▼"
+            )
+        }
+        Box(
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false },
+                modifier = Modifier
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Quantity")
+                            Checkbox(
+                                checked = budgetListUiState.showQuantity,
+                                onCheckedChange = {
+                                    viewModel.updateShowQuantity(it)
+                                }
+                            )
+                        }
+                    },
+                    onClick = {
+                        viewModel.updateShowQuantity(!budgetListUiState.showQuantity)
+                    }
+                )
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Frequency")
+                            Checkbox(
+                                checked = budgetListUiState.showFrequency,
+                                onCheckedChange = {
+                                    viewModel.updateShowFrequency(it)
+                                }
+                            )
+                        }
+                    },
+                    onClick = {
+                        viewModel.updateShowFrequency(!budgetListUiState.showFrequency)
+                    }
+                )
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Cost per Week")
+                            Checkbox(
+                                checked = budgetListUiState.showCostPerWeek,
+                                onCheckedChange = {
+                                    viewModel.updateShowCostPerWeek(it)
+                                }
+                            )
+                        }
+                    },
+                    onClick = {
+                        viewModel.updateShowCostPerWeek(!budgetListUiState.showCostPerWeek)
+                    }
+                )
+            }
+        }
+    }
+}
+
+
+
+
 
 @Composable
 fun ExpandableHeader(text: String, clickEffect: () -> Unit, open: Boolean) {
@@ -467,6 +469,12 @@ fun ListItem(
                     style = MaterialTheme.typography.headlineSmall,
                 )
             }
+            if (budgetListUiState.showCostPerWeek) {
+                Text(
+                    text = "Cost per week: " + valueToCurrency(budgetItem.value / budgetItem.frequency * 7.0),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+            }
         }
     }
 }
@@ -513,9 +521,19 @@ fun BudgetList(
     budgetListUiState: BudgetListUiState,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
-        items(budgetItemList.size) { index ->
-            ListItem(budgetItemList[index],
+//    LazyColumn(modifier = modifier) {
+//        items(budgetItemList.size) { index ->
+//            ListItem(budgetItemList[index],
+//                navController,
+//                viewModel,
+//                budgetListUiState
+//            )
+//        }
+//    }
+    Column(modifier = modifier) {
+        for (i in budgetItemList.indices) {
+        //items(budgetItemList.size) { index ->
+            ListItem(budgetItemList[i],
                 navController,
                 viewModel,
                 budgetListUiState
@@ -524,5 +542,36 @@ fun BudgetList(
     }
 }
 
+@Composable
+fun CategoryList(sectionsList: List<List<BudgetItem>>,
+                 navController: NavController,
+                 viewModel: BudgetListViewModel,
+                 budgetListUiState: BudgetListUiState
+) {
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        Log.i("num sections", "${sectionsList.size}")
+        items(sectionsList.size) { index ->
+            ExpandableSection(
+                sectionsList[index],
+                sectionsList[index][0].category.toString(),
+                navController,
+                viewModel,
+                budgetListUiState
+            )
+        }
+//        for (i in sectionsList.indices) {
+//            sectionsList[i][0].category?.let {
+//                ExpandableSection(
+//                    sectionsList[i],
+//                    it,
+//                    navController,
+//                    viewModel,
+//                    budgetListUiState
+//                )
+//            }
+//        }
+    }
+    //ExpandableSection(sectionsList[0], "Expenses")
+}
 
 
