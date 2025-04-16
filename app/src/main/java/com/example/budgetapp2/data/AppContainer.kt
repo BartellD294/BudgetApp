@@ -22,32 +22,12 @@ class AppDataContainer(
         .build()
     val budgetApiInterface: BudgetApiService = retrofit.create(BudgetApiService::class.java)
 
-
-
-
-
-
     var database: BudgetDatabase? = BudgetDatabase.getDatabase(application)
     /* override */ var repository: BudgetItemsRepository = OfflineBudgetItemsRepository(database!!.budgetItemDao(), budgetApiInterface)
-
-//    fun getDatabase(context: Context = application): BudgetDatabase {
-//        return database ?: synchronized(this) {
-//            database ?: createDatabase(context).also {database = it}
-//        }
-//    }
-
-//    fun createDatabase(context: Context): BudgetDatabase {
-//        return Room.databaseBuilder(
-//            context,
-//            BudgetDatabase::class.java,
-//            "budget_item_database"
-//        ).build()
-//    }
 
     fun updateDatabase(file: File? = null) {
         Log.i("update database", "update database")
         database = BudgetDatabase.getDatabase(application, file)
-
     }
     fun deleteDatabase() {
         application.deleteDatabase("budget_item_database")
@@ -59,10 +39,4 @@ class AppDataContainer(
     fun closeDatabase() {
         database!!.close()
     }
-
-//    fun resetDatabase(context: Context) {
-//        database!!.close()
-//        database = createDatabase(context)
-//
-//    }
 }

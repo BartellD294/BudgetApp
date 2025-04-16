@@ -43,10 +43,17 @@ interface BudgetItemDao {
 
     @Query("SELECT SUM (value) FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
     fun getTotalValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    @Query("SELECT SUM (valuePerDay) FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
+    fun getTotalDailyValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
     @Query("SELECT MAX (value) FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
     fun getMaxValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    @Query("SELECT MAX (valuePerDay) FROM expenses WHERE expenseOrIncome = :expenseOrIncome")
+    fun getMaxDailyValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
     @Query("SELECT SUM (value) FROM expenses WHERE category = :category AND expenseOrIncome = :expenseOrIncome")
     fun getTotalCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double>
+    @Query("SELECT SUM (valuePerDay) FROM expenses WHERE category = :category AND expenseOrIncome = :expenseOrIncome")
+    fun getTotalDailyCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double>
+
 
     //no income counterpart because incomes don't have quantity
     @Query("SELECT MAX (quantity) FROM expenses WHERE expenseOrIncome = 1")

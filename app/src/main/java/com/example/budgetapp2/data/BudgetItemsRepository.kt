@@ -22,9 +22,11 @@ interface BudgetItemsRepository {
     fun getAllExpensesOrIncomesWithoutCategory(expenseOrIncome: Int): Flow<List<BudgetItem>>
 
     fun getTotalValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    fun getTotalDailyValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
     fun getMaxValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
+    fun getMaxDailyValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double>
     fun getTotalCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double>
-
+    fun getTotalDailyCategoryValueExpensesOrIncomes(category: String, expenseOrIncome: Int): Flow<Double>
 
     //no income counterpart because incomes don't have quantity
     fun getMaxExpenseQuantity(): Flow<Double>
@@ -36,5 +38,6 @@ interface BudgetItemsRepository {
     fun getAllSubcategoriesOfCategory(category: String): Flow<List<Subcategory>>
 
     fun getMaxTotalCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double>
+    fun getMaxTotalDailyCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double>
     suspend fun updateItemsWithApiIds()
 }

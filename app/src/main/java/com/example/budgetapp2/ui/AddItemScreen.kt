@@ -52,7 +52,7 @@ fun AddItemScreen(
             coroutineScope {
                 launch {
                     viewModel.updateUiStateById(id.toInt())
-                    // button name = "Update Item"
+                    viewModel.updateEnterOrUpdate(1)
                 }
             }
         }
@@ -67,29 +67,32 @@ fun AddItemScreen(
 
     Scaffold(
         topBar = {
-            SingleChoiceSegmentedButtonRow(modifier = Modifier
-                .padding(1.dp).fillMaxWidth()
-            ) {
-                SegmentedButton(
-                    selected = expenseUiState.buttonIndex == 0,
-                    onClick = { viewModel.updateButton(0) },
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = 0,
-                        count = 2
-                    ),
-                    label = { Text(text = "Expense") },
-                )
-                SegmentedButton(
+            if (expenseUiState.enterOrUpdate == 0) {
+                SingleChoiceSegmentedButtonRow(modifier = Modifier
+                    .padding(1.dp).fillMaxWidth()
+                ) {
+                    SegmentedButton(
+                        selected = expenseUiState.buttonIndex == 0,
+                        onClick = { viewModel.updateButton(0) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = 0,
+                            count = 2
+                        ),
+                        label = { Text(text = "Expense") },
+                    )
+                    SegmentedButton(
 
-                    selected = expenseUiState.buttonIndex == 1,
-                    onClick = { viewModel.updateButton(1) },
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = 1,
-                        count = 2
-                    ),
-                    label = { Text(text = "Income") },
-                )
+                        selected = expenseUiState.buttonIndex == 1,
+                        onClick = { viewModel.updateButton(1) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = 1,
+                            count = 2
+                        ),
+                        label = { Text(text = "Income") },
+                    )
+                }
             }
+
         },
         bottomBar = {
             Button(
@@ -102,7 +105,11 @@ fun AddItemScreen(
                 modifier = Modifier.padding(16.dp)
                     .fillMaxWidth(),
             ) {
-                Text("Enter Item")
+                if (expenseUiState.enterOrUpdate == 0) {
+                    Text("Enter Item")
+                } else {
+                    Text("Update Item")
+                }
             }
         },
         content = { innerPadding ->
@@ -137,7 +144,8 @@ fun AddItemScreen(
                         onValueChange = viewModel::updateQuantity,
                         label = { Text("Item Quantity (per frequency period)") },
                         maxLines = 1,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = (expenseUiState.buttonIndex == 0)
                     )
                     //Category field
                     OutlinedTextField(

@@ -58,14 +58,26 @@ class OfflineBudgetItemsRepository(
     override fun getTotalValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getTotalValueExpensesOrIncomes(expenseOrIncome)
 
+    override fun getTotalDailyValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double> =
+        budgetItemDao.getTotalDailyValueExpensesOrIncomes(expenseOrIncome)
+
     override fun getMaxValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getMaxValueExpensesOrIncomes(expenseOrIncome)
+
+    override fun getMaxDailyValueExpensesOrIncomes(expenseOrIncome: Int): Flow<Double> =
+        budgetItemDao.getMaxDailyValueExpensesOrIncomes(expenseOrIncome)
 
     override fun getTotalCategoryValueExpensesOrIncomes(
         category: String,
         expenseOrIncome: Int
     ): Flow<Double> =
         budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
+
+    override fun getTotalDailyCategoryValueExpensesOrIncomes(
+        category: String,
+        expenseOrIncome: Int
+    ): Flow<Double> =
+        budgetItemDao.getTotalDailyCategoryValueExpensesOrIncomes(category, expenseOrIncome)
 
     override fun getMaxExpenseQuantity(): Flow<Double> =
         budgetItemDao.getMaxExpenseQuantity()
@@ -77,6 +89,14 @@ class OfflineBudgetItemsRepository(
         budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome).map { categoryList ->
             categoryList.map { category ->
                 budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
+                    .first()
+            }.maxOrNull() ?: 0.0
+        }
+
+    override fun getMaxTotalDailyCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double> =
+        budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome).map { categoryList ->
+            categoryList.map { category ->
+                budgetItemDao.getTotalDailyCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                     .first()
             }.maxOrNull() ?: 0.0
         }
@@ -103,12 +123,15 @@ class OfflineBudgetItemsRepository(
     //override fun getMaxCostPerWeek(): Flow<Double> = budgetItemDao.getMaxCostPerWeek()
 
     override fun getAllCategoriesExpensesOrIncomes(expenseOrIncome: Int): Flow<List<Category>> {
-        return budgetItemDao.getAllCategoryNames().map { categoryList ->
+        return budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome).map { categoryList ->
             categoryList.map { category ->
                 val totalValue =
                     budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                         .first()
-                Category(category, totalValue, getAllSubcategoriesOfCategory(category).first()) // getAllSubcategoriesOfCategory(category).first())
+                val totalValuePerWeek =
+                    budgetItemDao.getTotalDailyCategoryValueExpensesOrIncomes(category, expenseOrIncome)
+                        .first()
+                Category(category, totalValue, totalValuePerWeek, getAllSubcategoriesOfCategory(category).first()) // getAllSubcategoriesOfCategory(category).first())
             }
         }
     }
@@ -122,6 +145,11 @@ class OfflineBudgetItemsRepository(
     }
 }
 
-data class Category(val name: String, val totalValue: Double, val subcategories: List<Subcategory> = listOf())
+data class Category(
+    val name: String,
+    val totalValue: Double,
+    val totalValuePerWeek: Double,
+    val subcategories: List<Subcategory> = listOf()
+)
 
 data class Subcategory(val name: String = "")

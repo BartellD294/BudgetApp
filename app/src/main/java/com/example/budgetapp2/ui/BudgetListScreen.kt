@@ -504,7 +504,7 @@ fun ListItem(
             }
             if (budgetListUiState.showCostPerWeek) {
                 Text(
-                    text = "Cost per week: " + valueToCurrency(budgetItem.value / budgetItem.frequency * 7.0),
+                    text = "Cost per week: " + valueToCurrency(budgetItem.valuePerDay!! * 7.0),
                     style = MaterialTheme.typography.headlineSmall,
                 )
             }

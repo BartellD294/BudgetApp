@@ -52,14 +52,27 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         MutableStateFlow(emptyList())
     private val subcategoryList: MutableStateFlow<List<Subcategory>> =
         MutableStateFlow(emptyList())
+    private val enterOrUpdate = MutableStateFlow(0)
 
     var expenseUiState: StateFlow<ExpenseUiState> =
         combine(
             combine(
-                id, buttonIndex, name, value, quantity
-            ) { id, buttonIndex, name, value, quantity ->
+                id,
+                buttonIndex,
+                name,
+                value,
+                quantity
+            ) { id,
+                buttonIndex,
+                name,
+                value,
+                quantity ->
                 AddItemFlow1(
-                    id, buttonIndex, name, value, quantity
+                    id,
+                    buttonIndex,
+                    name,
+                    value,
+                    quantity
                 )
             },
             combine(
@@ -69,8 +82,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
                     category, subcategory, frequency, useApiKey, apiKey
                 )
             },
-            categoryList, subcategoryList
-        ) { combined1, combined2, categoryList, subcategoryList ->
+            categoryList, subcategoryList, enterOrUpdate
+        ) { combined1, combined2, categoryList, subcategoryList, enterOrUpdate ->
             ExpenseUiState(
                 id = combined1.id,
                 buttonIndex = combined1.buttonIndex,
@@ -83,7 +96,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
                 useApiKey = combined2.useApiKey,
                 apiKey = combined2.apiKey,
                 categoryList = categoryList,
-                subcategoryList = subcategoryList
+                subcategoryList = subcategoryList,
+                enterOrUpdate = enterOrUpdate
             )
         }.stateIn(
             scope = viewModelScope,
@@ -168,6 +182,10 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         val newExpense = expenseUiState.value.toExpense()
         application.container.repository.insertItem(newExpense)
     }
+
+    fun updateEnterOrUpdate(newValue: Int) {
+        enterOrUpdate.value = newValue
+    }
 }
 
 data class ExpenseUiState(
@@ -182,7 +200,8 @@ data class ExpenseUiState(
     val useApiKey: Boolean = false,
     val apiKey: String = "",
     val categoryList: List<Category> = listOf(),
-    val subcategoryList: List<Subcategory> = listOf()
+    val subcategoryList: List<Subcategory> = listOf(),
+    val enterOrUpdate: Int = 0
 )
 
 fun ExpenseUiState.toExpense(): BudgetItem {
@@ -195,7 +214,7 @@ fun ExpenseUiState.toExpense(): BudgetItem {
         category = category.ifEmpty { null },
         subcategory = subcategory.ifEmpty { null },
         frequency = frequency.toDouble(),
-        date = "",
+        valuePerDay = value.toDouble() * quantity.toDouble() / frequency.toDouble(),
         seriesId = apiKey.ifEmpty { null }
     )
 }

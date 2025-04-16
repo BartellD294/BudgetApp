@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgetapp2.data.valueToCurrency
 
 val barGraphWidth = 50
 val barGraphMaxHeight = 300
@@ -100,6 +101,28 @@ fun HomeScreen(
                 label = { Text(text = "Categories") },
             )
         }
+//        SingleChoiceSegmentedButtonRow(
+//            modifier = Modifier.align(Alignment.CenterHorizontally)
+//        ) {
+//            SegmentedButton(
+//                selected = homeUiState.totalOrWeekly == 0,
+//                onClick = { viewModel.updateTotalOrWeekly(0) },
+//                shape = SegmentedButtonDefaults.itemShape(
+//                    index = 0,
+//                    count = 2
+//                ),
+//                label = { Text(text = "Total Item Cost") },
+//            )
+//            SegmentedButton(
+//                selected = homeUiState.totalOrWeekly == 1,
+//                onClick = { viewModel.updateTotalOrWeekly(1) },
+//                shape = SegmentedButtonDefaults.itemShape(
+//                    index = 1,
+//                    count = 2
+//                ),
+//                label = { Text(text = "Cost per Week") },
+//            )
+//        }
 
         if (homeUiState.barOrPie == 0 && homeUiState.itemsOrCategories == 0) {
             ItemBarGraph(homeUiState)
@@ -120,12 +143,14 @@ fun HomeScreen(
 @Composable
 fun ItemBarGraph(
     homeUiState: HomeUiState,
+    totalOrWeekly: Int = 0
 ) {
     LazyRow(
         verticalAlignment = Alignment.Bottom,
     ) {
-        items(homeUiState.budgetItemList.size) { index ->
-            val thisHeight = ((homeUiState.budgetItemList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
+        items(homeUiState.expenseList.size) { index ->
+            //val thisHeight = ((homeUiState.expenseList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
+            val thisHeight = ((homeUiState.expenseList[index].valuePerDay!! / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
@@ -134,19 +159,26 @@ fun ItemBarGraph(
                 .padding(4.dp)
                 .background(Color.LightGray)
             ) {
-                Text(text = "[" + homeUiState.budgetItemList[index].id.toString() + "]",
+                Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]",
                     modifier = Modifier.align(Alignment.BottomCenter),
                     textAlign = androidx.compose.ui.text.style.TextAlign.End)
             }
         }
     }
     LazyColumn(modifier = Modifier) {
-        items(homeUiState.budgetItemList.size) { index ->
+        items(homeUiState.expenseList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
-                Text(text = "[" + homeUiState.budgetItemList[index].id.toString() + "]")
-                Text(text = homeUiState.budgetItemList[index].name)
-                Text(text = homeUiState.budgetItemList[index].value.toString())
+                Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
+                Text(text = homeUiState.expenseList[index].name)
+                //if (homeUiState.totalOrWeekly == 0) {
+                //    Text(text = homeUiState.expenseList[index].value.toString())
+                //} else {
+                    Text(
+                        text = (valueToCurrency(homeUiState.expenseList[index].valuePerDay!! * 7.0))
+                    )
+                //}
+
             }
         }
     }
@@ -159,8 +191,9 @@ fun CategoryBarGraph(
     LazyRow(
         verticalAlignment = Alignment.Bottom,
     ) {
-        items(homeUiState.categoryList.size) { index ->
-            val thisHeight = ((homeUiState.categoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
+        items(homeUiState.expenseCategoryList.size) { index ->
+            //val thisHeight = ((homeUiState.expenseCategoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
+            val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerWeek / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
@@ -177,12 +210,13 @@ fun CategoryBarGraph(
         }
     }
     LazyColumn(modifier = Modifier) {
-        items(homeUiState.categoryList.size) { index ->
+        items(homeUiState.expenseCategoryList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
                 Text(text = "[" + (index+1).toString() + "]")
-                Text(text = homeUiState.categoryList[index].name)
-                Text(text = homeUiState.categoryList[index].totalValue.toString())
+                Text(text = homeUiState.expenseCategoryList[index].name)
+                //Text(text = homeUiState.expenseCategoryList[index].totalValue.toString())
+                Text(text = homeUiState.expenseCategoryList[index].totalValuePerWeek.toString())
             }
         }
     }
@@ -203,10 +237,10 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                 .aspectRatio(1f)
                 .padding(30.dp)
         ) {
-            for (item in homeUiState.budgetItemList) {
+            for (item in homeUiState.expenseList) {
                 itemFraction = ((item.value / homeUiState.totalExpensesValue) * 360.0)
                 drawArc(
-                    color = colors[homeUiState.budgetItemList.indexOf(item) % colors.size],
+                    color = colors[homeUiState.expenseList.indexOf(item) % colors.size],
                     startAngle = itemStartAngle.toFloat(),
                     sweepAngle = itemFraction.toFloat(),
                     useCenter = true,
@@ -218,13 +252,13 @@ fun ItemPieChart(homeUiState: HomeUiState) {
             }
         }
         LazyColumn(modifier = Modifier) {
-            items(homeUiState.budgetItemList.size) { index ->
+            items(homeUiState.expenseList.size) { index ->
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,) {
-                    Text(text = "[" + homeUiState.budgetItemList[index].id.toString() + "]",
-                        color = colors[homeUiState.budgetItemList.indexOf(homeUiState.budgetItemList[index]) % colors.size])
-                    Text(text = homeUiState.budgetItemList[index].name)
-                    Text(text = homeUiState.budgetItemList[index].value.toString())
+                    Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]",
+                        color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size])
+                    Text(text = homeUiState.expenseList[index].name)
+                    Text(text = homeUiState.expenseList[index].value.toString())
                 }
             }
         }
