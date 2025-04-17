@@ -45,7 +45,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
     private val quantity = MutableStateFlow("")
     private val category = MutableStateFlow("")
     private val subcategory = MutableStateFlow("")
-    private val frequency = MutableStateFlow(0)
+    private val frequency = MutableStateFlow(1)
     private val useApiKey = MutableStateFlow(false)
     private val apiKey = MutableStateFlow("")
     private val categoryList: MutableStateFlow<List<Category>> =
@@ -209,7 +209,11 @@ fun ExpenseUiState.toExpense(): BudgetItem {
         id = id,
         expenseOrIncome = buttonIndex,
         name = name,
-        value = value.toDouble(),
+        value = if (value == "") {
+            0.0
+        } else {
+            value.toDouble()
+        },
         quantity = if (quantity == "") {
             null
         } else {

@@ -318,49 +318,52 @@ fun AddItemScreen(
                         }
                     }
                     //API ID checkbox and field
-                    Row (
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(paddingValue),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-
-                    ) {
-                        Text("Use API Key?")
-                        Checkbox(
-                            checked = expenseUiState.useApiKey,
-                            onCheckedChange = {
-                                viewModel.switchUseApiKey()
-                            },
-                            modifier = Modifier.fillMaxWidth()
-
-                        )
-                    }
-                    if (expenseUiState.useApiKey) {
-                        OutlinedTextField(
-                            value = expenseUiState.apiKey,
-                            onValueChange = viewModel::updateApiKey,
-                            modifier = Modifier.fillMaxWidth()
-                               .padding(paddingValue),
-                            label = { Text("API Key") },
-                            maxLines = 1,
-                        )
-                        Row(
+                    if (expenseUiState.buttonIndex == 0) {
+                        Row (
                             modifier = Modifier.fillMaxWidth()
                                 .padding(paddingValue),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
 
                         ) {
-                            OpenBrowserButton(
-                                url = "https://fred.stlouisfed.org/",
-                                buttonText = "Open API website"
-                            )
-                            OpenBrowserButton(
-                                url = "https://fred.stlouisfed.org/searchresults?st=" + expenseUiState.apiKey,
-                                buttonText = "Search for: " + expenseUiState.apiKey
+                            Text("Use API Key?")
+                            Checkbox(
+                                checked = expenseUiState.useApiKey,
+                                onCheckedChange = {
+                                    viewModel.switchUseApiKey()
+                                },
+                                modifier = Modifier.fillMaxWidth()
+
                             )
                         }
+                        if (expenseUiState.useApiKey) {
+                            OutlinedTextField(
+                                value = expenseUiState.apiKey,
+                                onValueChange = viewModel::updateApiKey,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(paddingValue),
+                                label = { Text("API Key") },
+                                maxLines = 1,
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(paddingValue),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
+
+                            ) {
+                                OpenBrowserButton(
+                                    url = "https://fred.stlouisfed.org/",
+                                    buttonText = "Open API website"
+                                )
+                                OpenBrowserButton(
+                                    url = "https://fred.stlouisfed.org/searchresults?st=" + expenseUiState.apiKey,
+                                    buttonText = "Search for: " + expenseUiState.apiKey
+                                )
+                            }
+                        }
                     }
+
 //                    Button(
 //                        onClick = {
 //                            coroutineScope.launch {

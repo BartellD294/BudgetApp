@@ -178,7 +178,7 @@ fun HomeScreen(
             ItemPieChart(homeUiState)
         }
         else if (homeUiState.barOrPie == 1 && homeUiState.itemsOrCategories == 1) {
-            //PieChart(homeUiState)
+            CategoryPieChart(homeUiState)
         }
 
     }
@@ -187,7 +187,6 @@ fun HomeScreen(
 @Composable
 fun ItemBarGraph(
     homeUiState: HomeUiState,
-    totalOrWeekly: Int = 0
 ) {
     LazyRow(
         verticalAlignment = Alignment.Bottom,
@@ -195,31 +194,45 @@ fun ItemBarGraph(
         items(homeUiState.expenseList.size) { index ->
             //val thisHeight = ((homeUiState.expenseList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
             val thisHeight = ((homeUiState.expenseList[index].valuePerDay / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
-            Box(modifier = Modifier
-                .size(
-                    width = (barGraphWidth).dp,
-                    height = thisHeight.dp
+            Column{
+                Box(modifier = Modifier
+                    .size(
+                        width = (barGraphWidth).dp,
+                        height = thisHeight.dp
+                    )
+                    .padding(4.dp)
+                    .background(colors[index % colors.size])
+                ) {
+
+                }
+                Text(
+                    text = "[" + homeUiState.expenseList[index].id.toString() + "]",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    //textAlign = androidx.compose.ui.text.style.TextAlign.End
                 )
-                .padding(4.dp)
-                .background(Color.LightGray)
-            ) {
-                Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]",
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.End)
             }
+
         }
     }
     LazyColumn(modifier = Modifier) {
         items(homeUiState.expenseList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
-                Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Text(
+                        text = "■",
+                        color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size]
+                    )
+                    Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
+                }
                 Text(text = homeUiState.expenseList[index].name)
                 //if (homeUiState.totalOrWeekly == 0) {
                 //    Text(text = homeUiState.expenseList[index].value.toString())
                 //} else {
                     Text(
-                        text = (valueToCurrency(homeUiState.expenseList[index].valuePerDay!! * 7.0))
+                        text = (valueToCurrency(homeUiState.expenseList[index].valuePerDay * 7.0))
                     )
                 //}
 
@@ -238,26 +251,39 @@ fun CategoryBarGraph(
         items(homeUiState.expenseCategoryList.size) { index ->
             //val thisHeight = ((homeUiState.expenseCategoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
             val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerDay / homeUiState.maxTotalDailyCategoryValue) * barGraphMaxHeight)
-            Box(modifier = Modifier
-                .size(
-                    width = (barGraphWidth).dp,
-                    height = thisHeight.dp
+            Column{
+                Box(modifier = Modifier
+                    .size(
+                        width = (barGraphWidth).dp,
+                        height = thisHeight.dp
+                    )
+                    .padding(4.dp)
+                    .background(colors[index % colors.size])
+                ) {
+                    //Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
+                }
+                Text(
+                    text = "[" + (index+1).toString() + "]",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    //textAlign = androidx.compose.ui.text.style.TextAlign.End
                 )
-                .padding(4.dp)
-                .background(Color.LightGray)
-            ) {
-                //Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
-                Text(text = "[" + (index+1).toString() + "]",
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.End)
             }
+
         }
     }
     LazyColumn(modifier = Modifier) {
         items(homeUiState.expenseCategoryList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
-                Text(text = "[" + (index+1).toString() + "]")
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Text(
+                        text = "■",
+                        color = colors[homeUiState.expenseCategoryList.indexOf(homeUiState.expenseCategoryList[index]) % colors.size]
+                    )
+                    Text(text = "[" + (index + 1).toString() + "]")
+                }
                 Text(text = homeUiState.expenseCategoryList[index].name)
                 //Text(text = homeUiState.expenseCategoryList[index].totalValue.toString())
                 Text(text = valueToCurrency(homeUiState.expenseCategoryList[index].totalValuePerDay * 7.0))
@@ -299,34 +325,102 @@ fun ItemPieChart(homeUiState: HomeUiState) {
             items(homeUiState.expenseList.size) { index ->
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,) {
-                    Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]",
-                        color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size])
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                    ) {
+                        Text(
+                            text = "■",
+                            color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size]
+                        )
+                        Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
+                    }
                     Text(text = homeUiState.expenseList[index].name)
                     Text(text = valueToCurrency(homeUiState.expenseList[index].valuePerDay * 7.0))
                 }
             }
         }
     }
-
 }
+
+@Composable
+fun CategoryPieChart(homeUiState: HomeUiState) {
+    var categoryIndex = 0
+    var categoryStartAngle = 0.0
+    var categoryFraction = 0.0
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(30.dp)
+        ) {
+            for (cat in homeUiState.expenseCategoryList) {
+                categoryFraction = ((cat.totalValuePerDay / homeUiState.totalExpensesDailyValue) * 360.0)
+                drawArc(
+                    color = colors[homeUiState.expenseCategoryList.indexOf(cat) % colors.size],
+                    startAngle = categoryStartAngle.toFloat(),
+                    sweepAngle = categoryFraction.toFloat(),
+                    useCenter = true,
+                    size = Size(size.width, size.height),
+                    topLeft = Offset(0f, 0f)
+                )
+                categoryIndex += 1
+                categoryStartAngle += categoryFraction
+            }
+        }
+        LazyColumn(modifier = Modifier) {
+            items(homeUiState.expenseCategoryList.size) { index ->
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,) {
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                    ) {
+                        Text(
+                            text = "■",
+                            color = colors[homeUiState.expenseCategoryList.indexOf(homeUiState.expenseCategoryList[index]) % colors.size]
+                        )
+                        Text(text = "[" + (index + 1).toString() + "]")
+                    }
+
+                    Text(text = homeUiState.expenseCategoryList[index].name)
+                    Text(text = valueToCurrency(homeUiState.expenseList[index].valuePerDay * 7.0))
+                }
+            }
+        }
+    }
+}
+
+val saturatedColors = listOf(
+    Color(0xFFFF4040),
+    Color(0xFFFFA040),
+    Color(0xFFffff40),
+    Color(0xFFA0FF40),
+    Color(0xFF40ff40),
+    Color(0xFF40FFA0),
+    Color(0xFF40FFFF),
+    Color(0xFF40A0FF),
+    Color(0xFF4040FF),
+    Color(0xFFA040FF),
+    Color(0xFFFF40FF),
+    Color(0xFFFF40A0),
+)
+
 val colors = listOf(
-    Color(0xFFF44336),
-    Color(0xFFE91E63),
-    Color(0xFF9C27B0),
-    Color(0xFF673AB7),
-    Color(0xFF3F51B5),
-    Color(0xFF2196F3),
-    Color(0xFF03A9F4),
-    Color(0xFF00BCD4),
-    Color(0xFF009688),
-    Color(0xFF4CAF50),
-    Color(0xFF8BC34A),
-    Color(0xFFCDDC39),
-    Color(0xFFFFEB3B),
-    Color(0xFFFFC107),
-    Color(0xFFFF9800),
-    Color(0xFFFF5722),
-    Color(0xFF795548),
+    Color(0xFFFF8080),
+    Color(0xFFFFC080),
+    Color(0xFFFFFF80),
+    Color(0xFFC0FF80),
+    Color(0xFF80FF80),
+    Color(0xFF80FFC0),
+    Color(0xFF80FFFF),
+    Color(0xFF80C0FF),
+    Color(0xFF8080FF),
+    Color(0xFFC080FF),
+    Color(0xFFFF80FF),
+    Color(0xFFFF80C0),
 )
 
 /*

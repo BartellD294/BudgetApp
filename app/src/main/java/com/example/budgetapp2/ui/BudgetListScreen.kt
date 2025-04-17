@@ -475,9 +475,9 @@ fun ListItem(
             ) {
                 Text(
                     text = if (budgetListUiState.expensesOrIncomes == 0) {
-                        "Cost: " + valueToCurrency(budgetItem.value) + " per 1 item"
+                        "Cost: " + valueToCurrency(budgetItem.value) + " per item"
                     } else {
-                        "Income: " + valueToCurrency(budgetItem.value) + " per frequency period"
+                        "Income: " + valueToCurrency(budgetItem.value)
                     },
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier
@@ -494,9 +494,9 @@ fun ListItem(
                     )
                 }
             }
-            if (budgetListUiState.showQuantity) {
+            if (budgetListUiState.showQuantity && budgetListUiState.expensesOrIncomes == 0) {
                 Text(
-                    text = "Quantity: " + budgetItem.quantity.toString() + " per frequency period",
+                    text = "Quantity: " + budgetItem.quantity.toString() + " items per frequency period",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -507,10 +507,18 @@ fun ListItem(
                 )
             }
             if (budgetListUiState.showCostPerWeek) {
-                Text(
-                    text = "Cost per week: " + valueToCurrency(budgetItem.valuePerDay!! * 7.0),
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                if (budgetListUiState.expensesOrIncomes == 0) {
+                    Text(
+                        text = "Cost per week: " + valueToCurrency(budgetItem.valuePerDay * 7.0),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                } else {
+                    Text(
+                        text = "Income per week: " + valueToCurrency(budgetItem.valuePerDay * 7.0),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+
             }
         }
     }

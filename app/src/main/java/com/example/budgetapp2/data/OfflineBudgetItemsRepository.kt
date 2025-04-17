@@ -111,7 +111,9 @@ class OfflineBudgetItemsRepository(
                         apiResponse.toString()
                     )
                     val latestCost = apiResponse.observ[0].cost
-                    val updatedItem = item.copy(value = latestCost.toDouble())
+                    Log.i("Updating API item", "if there's a crash, make sure you're not calling this on an Income (which doesn't have a quantity")
+                    val updatedItem = item.copy(value = latestCost.toDouble(),
+                        valuePerDay = latestCost.toDouble() * item.quantity!!.toDouble() / item.frequency)
                     budgetItemDao.updateItem(updatedItem)
                 }
             } catch (e: Exception) {
