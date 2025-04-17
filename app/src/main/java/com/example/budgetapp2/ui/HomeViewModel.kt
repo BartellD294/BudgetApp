@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 class HomeViewModel(application: BudgetApplication): ViewModel() {
     private val barOrPieButtonIndex = MutableStateFlow(0)
     private val itemsOrCategoriesButtonIndex = MutableStateFlow(0)
-    private val totalOrWeeklyButtonIndex = MutableStateFlow(0)
     // style = bar graph -> style = 0
     // style = pie chart -> style = 1
     // type = items -> type = 0
@@ -55,14 +54,14 @@ class HomeViewModel(application: BudgetApplication): ViewModel() {
                 application.container.repository.getMaxTotalDailyCategoryValueExpenseOrIncome(0),
                 barOrPieButtonIndex,
                 itemsOrCategoriesButtonIndex,
-                totalOrWeeklyButtonIndex
-            ) { totalExpensesValue, maxExpenseTotalDailyCategoryValueTotal, barOrPieButtonIndex, itemsOrCategoriesButtonIndex, totalOrWeeklyButtonIndex ->
+                application.container.repository.getTotalDailyValueExpensesOrIncomes(1)
+            ) { totalExpensesDailyValue, maxExpenseTotalDailyCategoryValueTotal, barOrPieButtonIndex, itemsOrCategoriesButtonIndex, totalIncomesDailyValue ->
                 CombinedFlow2(
-                    totalExpensesValue,
+                    totalExpensesDailyValue,
                     maxExpenseTotalDailyCategoryValueTotal,
                     barOrPieButtonIndex,
                     itemsOrCategoriesButtonIndex,
-                    totalOrWeeklyButtonIndex
+                    totalIncomesDailyValue
                 )
             }
         ) {
@@ -73,11 +72,11 @@ class HomeViewModel(application: BudgetApplication): ViewModel() {
                 expenseCategoryList = combined1.expenseCategoryList,
                 incomeCategoryList = combined1.incomeCategoryList,
                 maxExpenseDailyValue = combined1.maxExpenseDailyValue,
-                maxTotalCategoryValue = combined2.maxExpenseCategoryValueTotal,
-                totalExpensesValue = combined2.allExpensesTotal,
+                maxTotalDailyCategoryValue = combined2.maxExpenseDailyCategoryValueTotal,
+                totalExpensesDailyValue = combined2.allExpensesDailyTotal,
                 barOrPie = combined2.barOrPieButtonIndex,
                 itemsOrCategories = combined2.itemsOrCategoriesButtonIndex,
-                totalOrWeekly = combined2.totalOrWeeklyButtonIndex
+                totalIncomesDailyValue = combined2.totalIncomesDailyValue
             )
         }.stateIn(
             scope = viewModelScope,
@@ -92,9 +91,6 @@ class HomeViewModel(application: BudgetApplication): ViewModel() {
     fun updateItemsOrCategories(itemsOrCategories: Int) {
         itemsOrCategoriesButtonIndex.value = itemsOrCategories
     }
-    fun updateTotalOrWeekly(totalOrWeekly: Int) {
-        totalOrWeeklyButtonIndex.value = totalOrWeekly
-    }
 }
 
 data class CombinedFlow1(
@@ -105,11 +101,11 @@ data class CombinedFlow1(
     val maxExpenseDailyValue: Double,
 )
 data class CombinedFlow2(
-    val allExpensesTotal: Double,
-    val maxExpenseCategoryValueTotal: Double,
+    val allExpensesDailyTotal: Double,
+    val maxExpenseDailyCategoryValueTotal: Double,
     val barOrPieButtonIndex: Int,
     val itemsOrCategoriesButtonIndex: Int,
-    val totalOrWeeklyButtonIndex: Int
+    val totalIncomesDailyValue: Double
 )
 
 
@@ -119,9 +115,9 @@ data class HomeUiState(
     val expenseCategoryList: List<Category> = listOf(),
     val incomeCategoryList: List<Category> = listOf(),
     val maxExpenseDailyValue: Double = 0.0,
-    val maxTotalCategoryValue: Double = 0.0,
-    val totalExpensesValue: Double = 0.0,
+    val maxTotalDailyCategoryValue: Double = 0.0,
+    val totalExpensesDailyValue: Double = 0.0,
     val barOrPie: Int = 0,
     val itemsOrCategories: Int = 0,
-    val totalOrWeekly: Int = 0
+    val totalIncomesDailyValue: Double = 0.0
 )

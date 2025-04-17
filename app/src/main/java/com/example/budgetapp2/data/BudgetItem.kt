@@ -23,8 +23,8 @@ data class BudgetItem(
     //Not applicable for incomes.
     val quantity: Double?,
 
-    val category: String?,
-    val subcategory: String?,
+    val category: String,
+    val subcategory: String,
 
     //You buy [amount] of this item every [frequency] days,
     //or you get this income amount every [frequency] days.
@@ -33,7 +33,7 @@ data class BudgetItem(
     //val date: String,
 
     //Amount actually paid each week. Not applicable for incomes (just change frequency)
-    val valuePerDay: Double? = quantity!! * value / frequency,
+    val valuePerDay: Double,
 
     //https://api.stlouisfed.org/fred/series/observations?series_id=GNPCA&api_key=abcdefghijklmnopqrstuvwxyz123456
     val seriesId: String? = null

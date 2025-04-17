@@ -474,7 +474,11 @@ fun ListItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = valueToCurrency(budgetItem.value),
+                    text = if (budgetListUiState.expensesOrIncomes == 0) {
+                        "Cost: " + valueToCurrency(budgetItem.value) + " per 1 item"
+                    } else {
+                        "Income: " + valueToCurrency(budgetItem.value) + " per frequency period"
+                    },
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier
                     //.fillMaxWidth()
@@ -492,20 +496,20 @@ fun ListItem(
             }
             if (budgetListUiState.showQuantity) {
                 Text(
-                    text = "Quantity: " + budgetItem.quantity.toString(),
-                    style = MaterialTheme.typography.headlineSmall
+                    text = "Quantity: " + budgetItem.quantity.toString() + " per frequency period",
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             if (budgetListUiState.showFrequency) {
                 Text(
-                    text = "Frequency: " + budgetItem.frequency.toString(),
-                    style = MaterialTheme.typography.headlineSmall,
+                    text = "Frequency: Every " + budgetItem.frequency.toString() + " days",
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
             if (budgetListUiState.showCostPerWeek) {
                 Text(
                     text = "Cost per week: " + valueToCurrency(budgetItem.valuePerDay!! * 7.0),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
         }

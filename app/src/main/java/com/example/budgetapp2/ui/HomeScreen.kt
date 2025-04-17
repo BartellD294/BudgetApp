@@ -27,9 +27,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,15 +50,56 @@ fun HomeScreen(
     Column(
         //horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        HorizontalDivider(
+            modifier = Modifier//.weight(1f)
+                .padding(4.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            thickness = 3.dp
+        )
         Card(
             modifier = Modifier.padding(4.dp)
                 .fillMaxWidth()
         ) {
-            Text(text = "Home header",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(horizontal = 4.dp,
-                    vertical = 8.dp)
-                    .align(Alignment.CenterHorizontally))
+            Column{
+                Text(
+                    text = "Weekly Income: " + valueToCurrency(homeUiState.totalIncomesDailyValue * 7.0),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 4.dp,
+                        vertical = 8.dp)
+                        .align(Alignment.Start)
+                )
+                Text(
+                    text = "Weekly Expenses: " + valueToCurrency(homeUiState.totalExpensesDailyValue * 7.0),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(horizontal = 4.dp,
+                        vertical = 8.dp)
+                        .align(Alignment.Start)
+                )
+            }
+
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            HorizontalDivider(
+                modifier = Modifier.weight(1f)
+                    .padding(4.dp),
+                thickness = 3.dp
+            )
+            Text(
+                modifier = Modifier.padding(4.dp),
+                text = "Weekly Expenses Breakdown",
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+            )
+            HorizontalDivider(
+                modifier = Modifier.weight(1f)
+                    .padding(4.dp),
+                thickness = 3.dp
+            )
         }
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -150,7 +194,7 @@ fun ItemBarGraph(
     ) {
         items(homeUiState.expenseList.size) { index ->
             //val thisHeight = ((homeUiState.expenseList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
-            val thisHeight = ((homeUiState.expenseList[index].valuePerDay!! / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
+            val thisHeight = ((homeUiState.expenseList[index].valuePerDay / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
@@ -193,7 +237,7 @@ fun CategoryBarGraph(
     ) {
         items(homeUiState.expenseCategoryList.size) { index ->
             //val thisHeight = ((homeUiState.expenseCategoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
-            val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerWeek / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
+            val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerDay / homeUiState.maxTotalDailyCategoryValue) * barGraphMaxHeight)
             Box(modifier = Modifier
                 .size(
                     width = (barGraphWidth).dp,
@@ -216,7 +260,7 @@ fun CategoryBarGraph(
                 Text(text = "[" + (index+1).toString() + "]")
                 Text(text = homeUiState.expenseCategoryList[index].name)
                 //Text(text = homeUiState.expenseCategoryList[index].totalValue.toString())
-                Text(text = homeUiState.expenseCategoryList[index].totalValuePerWeek.toString())
+                Text(text = valueToCurrency(homeUiState.expenseCategoryList[index].totalValuePerDay * 7.0))
             }
         }
     }
@@ -238,7 +282,7 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                 .padding(30.dp)
         ) {
             for (item in homeUiState.expenseList) {
-                itemFraction = ((item.value / homeUiState.totalExpensesValue) * 360.0)
+                itemFraction = ((item.valuePerDay / homeUiState.totalExpensesDailyValue) * 360.0)
                 drawArc(
                     color = colors[homeUiState.expenseList.indexOf(item) % colors.size],
                     startAngle = itemStartAngle.toFloat(),
@@ -258,7 +302,7 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                     Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]",
                         color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size])
                     Text(text = homeUiState.expenseList[index].name)
-                    Text(text = homeUiState.expenseList[index].value.toString())
+                    Text(text = valueToCurrency(homeUiState.expenseList[index].valuePerDay * 7.0))
                 }
             }
         }

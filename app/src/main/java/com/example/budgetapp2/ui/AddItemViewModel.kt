@@ -210,11 +210,20 @@ fun ExpenseUiState.toExpense(): BudgetItem {
         expenseOrIncome = buttonIndex,
         name = name,
         value = value.toDouble(),
-        quantity = quantity.toDouble(),
-        category = category.ifEmpty { null },
-        subcategory = subcategory.ifEmpty { null },
+        quantity = if (quantity == "") {
+            null
+        } else {
+            quantity.toDouble()
+        },
+        category = category.ifEmpty { "Uncategorized" },
+        subcategory = subcategory.ifEmpty { "No subcategory" },
         frequency = frequency.toDouble(),
-        valuePerDay = value.toDouble() * quantity.toDouble() / frequency.toDouble(),
+        valuePerDay = if (buttonIndex == 0) { //expense
+            value.toDouble() * quantity.toDouble() / frequency.toDouble()
+
+        } else { // income
+            value.toDouble() / frequency.toDouble()
+        },
         seriesId = apiKey.ifEmpty { null }
     )
 }

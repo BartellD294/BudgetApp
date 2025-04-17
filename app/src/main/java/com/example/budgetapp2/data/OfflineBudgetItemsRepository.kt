@@ -128,10 +128,10 @@ class OfflineBudgetItemsRepository(
                 val totalValue =
                     budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                         .first()
-                val totalValuePerWeek =
+                val totalValuePerDay =
                     budgetItemDao.getTotalDailyCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                         .first()
-                Category(category, totalValue, totalValuePerWeek, getAllSubcategoriesOfCategory(category).first()) // getAllSubcategoriesOfCategory(category).first())
+                Category(category, totalValue, totalValuePerDay, getAllSubcategoriesOfCategory(category).first()) // getAllSubcategoriesOfCategory(category).first())
             }
         }
     }
@@ -148,7 +148,7 @@ class OfflineBudgetItemsRepository(
 data class Category(
     val name: String,
     val totalValue: Double,
-    val totalValuePerWeek: Double,
+    val totalValuePerDay: Double,
     val subcategories: List<Subcategory> = listOf()
 )
 
