@@ -19,7 +19,7 @@ class OfflineBudgetItemsRepository(
     override suspend fun updateItem(item: BudgetItem) =
         budgetItemDao.updateItem(item)
 
-    override suspend fun deleteItem(item: BudgetItem) =
+    override suspend fun  deleteItem(item: BudgetItem) =
         budgetItemDao.deleteItem(item)
 
     override fun getAllItems(): Flow<List<BudgetItem>> =

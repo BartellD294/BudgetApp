@@ -24,11 +24,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -145,28 +149,6 @@ fun HomeScreen(
                 label = { Text(text = "Categories") },
             )
         }
-//        SingleChoiceSegmentedButtonRow(
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        ) {
-//            SegmentedButton(
-//                selected = homeUiState.totalOrWeekly == 0,
-//                onClick = { viewModel.updateTotalOrWeekly(0) },
-//                shape = SegmentedButtonDefaults.itemShape(
-//                    index = 0,
-//                    count = 2
-//                ),
-//                label = { Text(text = "Total Item Cost") },
-//            )
-//            SegmentedButton(
-//                selected = homeUiState.totalOrWeekly == 1,
-//                onClick = { viewModel.updateTotalOrWeekly(1) },
-//                shape = SegmentedButtonDefaults.itemShape(
-//                    index = 1,
-//                    count = 2
-//                ),
-//                label = { Text(text = "Cost per Week") },
-//            )
-//        }
 
         if (homeUiState.barOrPie == 0 && homeUiState.itemsOrCategories == 0) {
             ItemBarGraph(homeUiState)
@@ -188,32 +170,36 @@ fun HomeScreen(
 fun ItemBarGraph(
     homeUiState: HomeUiState,
 ) {
-    LazyRow(
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        items(homeUiState.expenseList.size) { index ->
-            //val thisHeight = ((homeUiState.expenseList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
-            val thisHeight = ((homeUiState.expenseList[index].valuePerDay / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
-            Column{
-                Box(modifier = Modifier
-                    .size(
-                        width = (barGraphWidth).dp,
-                        height = thisHeight.dp
+    Row{
+        BarGraphVerticalScale(homeUiState, 0)
+        LazyRow(
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            items(homeUiState.expenseList.size) { index ->
+                //val thisHeight = ((homeUiState.expenseList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
+                val thisHeight = ((homeUiState.expenseList[index].valuePerDay / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
+                Column{
+                    Box(modifier = Modifier
+                        .size(
+                            width = (barGraphWidth).dp,
+                            height = thisHeight.dp
+                        )
+                        .padding(4.dp)
+                        .background(colors[index % colors.size])
+                    ) {
+
+                    }
+                    Text(
+                        text = "[" + homeUiState.expenseList[index].id.toString() + "]",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        //textAlign = androidx.compose.ui.text.style.TextAlign.End
                     )
-                    .padding(4.dp)
-                    .background(colors[index % colors.size])
-                ) {
-
                 }
-                Text(
-                    text = "[" + homeUiState.expenseList[index].id.toString() + "]",
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    //textAlign = androidx.compose.ui.text.style.TextAlign.End
-                )
-            }
 
+            }
         }
     }
+
     LazyColumn(modifier = Modifier) {
         items(homeUiState.expenseList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
@@ -242,35 +228,77 @@ fun ItemBarGraph(
 }
 
 @Composable
+fun BarGraphVerticalScale(
+    homeUiState: HomeUiState,
+    itemsOrCategories: Int
+) {
+    Column(
+        modifier = Modifier.height(barGraphMaxHeight.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        HorizontalDivider(
+            modifier = Modifier//.weight(1f)
+                .width(barGraphWidth.dp),
+            thickness = 3.dp
+        )
+        Text(
+            text = if (itemsOrCategories == 0) {
+                valueToCurrency(homeUiState.maxExpenseDailyValue * 7.0)
+            } else {
+                valueToCurrency(homeUiState.maxTotalDailyCategoryValue * 7.0)
+            }
+        )
+        VerticalDivider(
+            modifier = Modifier.weight(1f),
+            //.height(barGraphMaxHeight.dp),
+            thickness = 3.dp
+        )
+        Text(
+            text = "$0.00"
+        )
+        HorizontalDivider(
+            modifier = Modifier//.weight(1f)
+                .width(barGraphWidth.dp),
+            thickness = 3.dp
+        )
+    }
+}
+
+@Composable
 fun CategoryBarGraph(
     homeUiState: HomeUiState
 ) {
-    LazyRow(
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        items(homeUiState.expenseCategoryList.size) { index ->
-            //val thisHeight = ((homeUiState.expenseCategoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
-            val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerDay / homeUiState.maxTotalDailyCategoryValue) * barGraphMaxHeight)
-            Column{
-                Box(modifier = Modifier
-                    .size(
-                        width = (barGraphWidth).dp,
-                        height = thisHeight.dp
-                    )
-                    .padding(4.dp)
-                    .background(colors[index % colors.size])
-                ) {
-                    //Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
-                }
-                Text(
-                    text = "[" + (index+1).toString() + "]",
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    //textAlign = androidx.compose.ui.text.style.TextAlign.End
-                )
-            }
+    Row {
+        BarGraphVerticalScale(homeUiState, 1)
+        LazyRow(
+            verticalAlignment = Alignment.Bottom,
+        ) {
 
+            items(homeUiState.expenseCategoryList.size) { index ->
+                //val thisHeight = ((homeUiState.expenseCategoryList[index].totalValue / homeUiState.maxTotalCategoryValue) * barGraphMaxHeight)
+                val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerDay / homeUiState.maxTotalDailyCategoryValue) * barGraphMaxHeight)
+                Column{
+                    Box(modifier = Modifier
+                        .size(
+                            width = (barGraphWidth).dp,
+                            height = thisHeight.dp
+                        )
+                        .padding(4.dp)
+                        .background(colors[index % colors.size])
+                    ) {
+                        //Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
+                    }
+                    Text(
+                        text = "[" + (index+1).toString() + "]",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        //textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    )
+                }
+
+            }
         }
     }
+
     LazyColumn(modifier = Modifier) {
         items(homeUiState.expenseCategoryList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
@@ -386,7 +414,7 @@ fun CategoryPieChart(homeUiState: HomeUiState) {
                     }
 
                     Text(text = homeUiState.expenseCategoryList[index].name)
-                    Text(text = valueToCurrency(homeUiState.expenseList[index].valuePerDay * 7.0))
+                    Text(text = valueToCurrency(homeUiState.expenseCategoryList[index].totalValuePerDay * 7.0))
                 }
             }
         }

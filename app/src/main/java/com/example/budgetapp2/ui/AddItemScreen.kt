@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -37,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp2.data.Subcategory
@@ -145,6 +147,7 @@ fun AddItemScreen(
                     //Value field
                     OutlinedTextField(
                         value = expenseUiState.value.toString(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = viewModel::updateValue,
                         label = { Text("Item Value (per 1 item)") },
                         maxLines = 1,
@@ -154,6 +157,7 @@ fun AddItemScreen(
                     //Quantity field
                     OutlinedTextField(
                         value = expenseUiState.quantity,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = viewModel::updateQuantity,
                         label = { Text("Item Quantity (per frequency period)") },
                         maxLines = 1,
@@ -267,6 +271,7 @@ fun AddItemScreen(
                     //Frequency field
                     OutlinedTextField(
                         value = expenseUiState.frequency.toString(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue),
