@@ -38,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -136,7 +138,7 @@ fun ListHeader(
     }
 
     when (sortBy.value) {
-        "Name (A-Z)" -> CategoryList(
+        "Name (A-Z)" -> CategoriesList(
             budgetListUiState.budgetItemList
                 .filter {if (expensesOrIncomes == 0) {
                     it.expenseOrIncome == 0
@@ -149,8 +151,9 @@ fun ListHeader(
                 .toList(),
             navController,
             viewModel,
-            budgetListUiState)
-        "Name (Z-A)" -> CategoryList(
+            budgetListUiState,
+            expensesOrIncomes)
+        "Name (Z-A)" -> CategoriesList(
             budgetListUiState.budgetItemList
                 .filter {if (expensesOrIncomes == 0) {
                     it.expenseOrIncome == 0
@@ -163,8 +166,9 @@ fun ListHeader(
                 .toList(),
             navController,
             viewModel,
-            budgetListUiState)
-        "Value (Low to High)" -> CategoryList(
+            budgetListUiState,
+            expensesOrIncomes)
+        "Value (Low to High)" -> CategoriesList(
             budgetListUiState.budgetItemList
                 .filter {if (expensesOrIncomes == 0) {
                     it.expenseOrIncome == 0
@@ -177,8 +181,9 @@ fun ListHeader(
                 .toList(),
             navController,
             viewModel,
-            budgetListUiState)
-        "Value (High to Low)" -> CategoryList(
+            budgetListUiState,
+            expensesOrIncomes)
+        "Value (High to Low)" -> CategoriesList(
             budgetListUiState.budgetItemList
                 .filter {if (expensesOrIncomes == 0) {
                     it.expenseOrIncome == 0
@@ -191,7 +196,8 @@ fun ListHeader(
                 .toList(),
             navController,
             viewModel,
-            budgetListUiState)
+            budgetListUiState,
+            expensesOrIncomes)
     }
 }
 
@@ -355,49 +361,34 @@ fun UpdateApisButton(
     }
 }
 
-
-
-
-
 @Composable
-fun ExpandableHeader(text: String, clickEffect: () -> Unit, open: Boolean) {
-    Row(modifier = Modifier
-        .clickable { clickEffect() }
-        .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-        if (open) {
-            Text(
-                text = "▲",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .padding(16.dp)
-            )
-        }
-        else {
-            Text(
-                text = "▼",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .padding(16.dp)
+fun CategoriesList(listByCategory: List<List<BudgetItem>>,
+                   navController: NavController,
+                   viewModel: BudgetListViewModel,
+                   budgetListUiState: BudgetListUiState,
+                   expensesOrIncomes: Int = 0
+) {
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        Log.i("num sections", "${listByCategory.size}")
+        items(listByCategory.size) { index ->
+            CategorySection(
+                listByCategory[index],
+                listByCategory[index][0].category.toString(),
+                navController,
+                viewModel,
+                budgetListUiState
             )
         }
     }
 }
 
 @Composable
-fun ExpandableSection(itemsList: List<BudgetItem>,
-                      headerName: String = "Expenses",
-                      navController: NavController,
-                      viewModel: BudgetListViewModel,
-                      budgetListUiState: BudgetListUiState
+fun CategorySection(thisCategoryItemsList: List<BudgetItem>,
+                    headerName: String = "Expenses",
+                    navController: NavController,
+                    viewModel: BudgetListViewModel,
+                    budgetListUiState: BudgetListUiState,
+                    expensesOrIncomes: Int = 0
 ) {
     var isOpen by rememberSaveable { mutableStateOf(false) }
     Column(
@@ -408,7 +399,70 @@ fun ExpandableSection(itemsList: List<BudgetItem>,
                 .padding(2.dp)
                 .fillMaxWidth()
         ) {
-            ExpandableHeader(headerName, { isOpen = !isOpen }, isOpen)
+            CategoryHeader(headerName, { isOpen = !isOpen }, isOpen)
+        }
+        if (isOpen) {
+            SubcategoriesList(
+                thisCategoryItemsList
+                    .filter {if (expensesOrIncomes == 0) {
+                        it.expenseOrIncome == 0
+                    } else {
+                        it.expenseOrIncome == 1
+                    }}
+                    .sortedBy { it.name }
+                    .groupBy { it.subcategory }
+                    .values
+                    .toList(),
+                navController,
+                viewModel,
+                budgetListUiState
+            )
+
+        }
+    }
+}
+
+@Composable
+fun SubcategoriesList(
+    subcategoriesList: List<List<BudgetItem>>,
+    navController: NavController,
+    viewModel: BudgetListViewModel,
+    budgetListUiState: BudgetListUiState
+) {
+    for (i in subcategoriesList.indices) {
+        SubcategorySection(
+            subcategoriesList[i],
+            subcategoriesList[i][0].subcategory.toString(),
+            navController,
+            viewModel,
+            budgetListUiState
+        )
+    }
+}
+
+@Composable
+fun SubcategorySection(
+    itemsList: List<BudgetItem>,
+    headerName: String = "Expenses",
+    navController: NavController,
+    viewModel: BudgetListViewModel,
+    budgetListUiState: BudgetListUiState
+) {
+    var isOpen by rememberSaveable { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+    ) {
+        Card(
+            modifier = Modifier
+                .padding(2.dp)
+                .fillMaxWidth(),
+            shape = RectangleShape
+        ) {
+            SubcategoryHeader(
+                headerName,
+                { isOpen = !isOpen },
+                isOpen
+            )
         }
         if (isOpen) {
             BudgetList(
@@ -420,6 +474,119 @@ fun ExpandableSection(itemsList: List<BudgetItem>,
         }
     }
 }
+
+@Composable
+fun BudgetList(
+    budgetItemList: List<BudgetItem>,
+    navController: NavController,
+    viewModel: BudgetListViewModel,
+    budgetListUiState: BudgetListUiState,
+    modifier: Modifier = Modifier,
+) {
+//    LazyColumn(modifier = modifier) {
+//        items(budgetItemList.size) { index ->
+//            ListItem(budgetItemList[index],
+//                navController,
+//                viewModel,
+//                budgetListUiState
+//            )
+//        }
+//    }
+    Column(modifier = modifier) {
+        for (i in budgetItemList.indices) {
+            //items(budgetItemList.size) { index ->
+            ListItem(budgetItemList[i],
+                navController,
+                viewModel,
+                budgetListUiState
+            )
+        }
+    }
+}
+
+
+
+
+
+@Composable
+fun CategoryHeader(text: String,
+                   clickEffect: () -> Unit,
+                   open: Boolean,
+                   padding: Int = 16,
+                   style: TextStyle = MaterialTheme.typography.headlineMedium,
+) {
+    Row(modifier = Modifier
+        .clickable { clickEffect() }
+        .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = text,
+            style = style,
+            modifier = Modifier
+                .padding(padding.dp)
+        )
+        if (open) {
+            Text(
+                text = "▲",
+                style = style,
+                modifier = Modifier
+                    .padding(padding.dp)
+            )
+        }
+        else {
+            Text(
+                text = "▼",
+                style = style,
+                modifier = Modifier
+                    .padding(padding.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun SubcategoryHeader(text: String,
+                   clickEffect: () -> Unit,
+                   open: Boolean,
+) {
+    Row(modifier = Modifier
+        .clickable { clickEffect() }
+        .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineSmall,
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier
+                .padding(top = 4.dp, bottom = 4.dp,
+                    start = 16.dp,end = 16.dp)
+        )
+        if (open) {
+            Text(
+                text = "▲",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier
+                    .padding(4.dp)
+            )
+        }
+        else {
+            Text(
+                text = "▼",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier
+                    .padding(4.dp)
+            )
+        }
+    }
+}
+
+
+
+
 
 @Composable
 fun ListItem(
@@ -523,100 +690,10 @@ fun ListItem(
         }
     }
 }
-//        LazyColumn(
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//
-//            items (budgetListUiState.numFilters) {
-//                if (budgetListUiState.showQuantity) {
-//                    Text(
-//                        text = "Quantity: " + budgetItem.quantity.toString(),
-//                        style = MaterialTheme.typography.headlineSmall
-//                    )
-//                }
-//                if (budgetListUiState.showFrequency) {
-//                    Text(
-//                        text = "Frequency: " + budgetItem.frequency.toString(),
-//                        style = MaterialTheme.typography.headlineSmall,)
-//                }
-//            }
-//            if (budgetListUiState.showQuantity) {
-//                item {
-//                    Text(
-//                        text = "Quantity: " + budgetItem.quantity.toString(),
-//                        style = MaterialTheme.typography.headlineSmall
-//                    )
-//                }
-//            }
-//            if (budgetListUiState.showFrequency) {
-//                item {
-//                    Text(
-//                        text = "Frequency: " + budgetItem.frequency.toString(),
-//                        style = MaterialTheme.typography.headlineSmall,
-//                    )
-//                }
-//            }
 
 
-@Composable
-fun BudgetList(
-    budgetItemList: List<BudgetItem>,
-    navController: NavController,
-    viewModel: BudgetListViewModel,
-    budgetListUiState: BudgetListUiState,
-    modifier: Modifier = Modifier,
-) {
-//    LazyColumn(modifier = modifier) {
-//        items(budgetItemList.size) { index ->
-//            ListItem(budgetItemList[index],
-//                navController,
-//                viewModel,
-//                budgetListUiState
-//            )
-//        }
-//    }
-    Column(modifier = modifier) {
-        for (i in budgetItemList.indices) {
-        //items(budgetItemList.size) { index ->
-            ListItem(budgetItemList[i],
-                navController,
-                viewModel,
-                budgetListUiState
-            )
-        }
-    }
-}
 
-@Composable
-fun CategoryList(sectionsList: List<List<BudgetItem>>,
-                 navController: NavController,
-                 viewModel: BudgetListViewModel,
-                 budgetListUiState: BudgetListUiState
-) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        Log.i("num sections", "${sectionsList.size}")
-        items(sectionsList.size) { index ->
-            ExpandableSection(
-                sectionsList[index],
-                sectionsList[index][0].category.toString(),
-                navController,
-                viewModel,
-                budgetListUiState
-            )
-        }
-//        for (i in sectionsList.indices) {
-//            sectionsList[i][0].category?.let {
-//                ExpandableSection(
-//                    sectionsList[i],
-//                    it,
-//                    navController,
-//                    viewModel,
-//                    budgetListUiState
-//                )
-//            }
-//        }
-    }
-    //ExpandableSection(sectionsList[0], "Expenses")
-}
+
+
 
 

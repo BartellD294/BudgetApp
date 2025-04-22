@@ -362,8 +362,8 @@ fun AddItemScreen(
                                     buttonText = "Open API website"
                                 )
                                 OpenBrowserButton(
-                                    url = "https://fred.stlouisfed.org/searchresults?st=" + expenseUiState.apiKey,
-                                    buttonText = "Search for: " + expenseUiState.apiKey
+                                    url = "https://fred.stlouisfed.org/searchresults?st=" + expenseUiState.name,
+                                    buttonText = "Search for: " + expenseUiState.name
                                 )
                             }
                         }

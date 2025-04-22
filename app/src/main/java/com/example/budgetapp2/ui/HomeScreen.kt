@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.VerticalDivider
@@ -52,7 +54,7 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
 
     Column(
-        //horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.verticalScroll(rememberScrollState()),
     ) {
         HorizontalDivider(
             modifier = Modifier//.weight(1f)
@@ -200,8 +202,12 @@ fun ItemBarGraph(
         }
     }
 
-    LazyColumn(modifier = Modifier) {
-        items(homeUiState.expenseList.size) { index ->
+    Column(modifier = Modifier,
+    //LazyColumn(modifier = Modifier,
+        //userScrollEnabled = false
+    ) {
+        for (index: Int in 0 until homeUiState.expenseList.size) {
+        //items(homeUiState.expenseList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
                 Row(
@@ -299,8 +305,10 @@ fun CategoryBarGraph(
         }
     }
 
-    LazyColumn(modifier = Modifier) {
-        items(homeUiState.expenseCategoryList.size) { index ->
+    //LazyColumn(modifier = Modifier) {
+    Column(modifier = Modifier) {
+        for (index: Int in 0 until homeUiState.expenseCategoryList.size) {
+        //items(homeUiState.expenseCategoryList.size) { index ->
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,) {
                 Row(
@@ -349,8 +357,10 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                 itemStartAngle += itemFraction
             }
         }
-        LazyColumn(modifier = Modifier) {
-            items(homeUiState.expenseList.size) { index ->
+        Column(modifier = Modifier) {
+        //LazyColumn(modifier = Modifier) {
+            for (index: Int in 0 until homeUiState.expenseList.size) {
+            //items(homeUiState.expenseList.size) { index ->
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,) {
                     Row(
@@ -399,8 +409,10 @@ fun CategoryPieChart(homeUiState: HomeUiState) {
                 categoryStartAngle += categoryFraction
             }
         }
-        LazyColumn(modifier = Modifier) {
-            items(homeUiState.expenseCategoryList.size) { index ->
+        Column(modifier = Modifier) {
+        //LazyColumn(modifier = Modifier) {
+            for (index: Int in 0 until homeUiState.expenseCategoryList.size) {
+            //items(homeUiState.expenseCategoryList.size) { index ->
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,) {
                     Row(
