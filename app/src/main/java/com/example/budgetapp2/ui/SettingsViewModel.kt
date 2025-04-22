@@ -63,6 +63,7 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
         //val outputStream = contentResolver.openOutputStream(exportUri!!)
         val dbFile = context.getDatabasePath("budget_item_database")
         application.container.closeDatabase()
+        //application.container.deleteDatabase()
         inputStream?.use { input ->
             FileOutputStream(dbFile).use { output ->
                 input.copyTo(output)
@@ -71,10 +72,15 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
         //Log.i("imported temp file", tempFile.toString())
 
 
-        //application.container.deleteDatabase()
-        application.container.updateDatabase()
+
+        application.container.updateDatabase(file = dbFile)
         //application.container.resetDatabase(context)
         application.container.updateRepository()
+//        viewModelScope.launch {
+//            application.container.reload()
+//        }
+        application.restartApp()
+
     }
 
     fun exportDatabase(context: Context) {
@@ -88,6 +94,7 @@ class SettingsViewModel(val application: BudgetApplication): ViewModel(), Serial
         }
         application.container.updateDatabase()
         application.container.updateRepository()
+        application.restartApp()
     }
 
 }
