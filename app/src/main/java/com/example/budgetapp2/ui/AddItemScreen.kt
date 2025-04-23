@@ -21,6 +21,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -39,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp2.data.Subcategory
@@ -135,11 +137,17 @@ fun AddItemScreen(
                         .verticalScroll(rememberScrollState()),
                     //verticalArrangement = Arrangement.spacedBy(paddingValue)
                 ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = ("* indicates required field."),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleSmall
+                    )
                     //Name field
                     OutlinedTextField(
                         value = expenseUiState.name,
                         onValueChange = viewModel::updateName,
-                        label = { Text("Item Name") },
+                        label = { Text("Item Name *") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue)
@@ -149,7 +157,7 @@ fun AddItemScreen(
                         value = expenseUiState.value.toString(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = viewModel::updateValue,
-                        label = { Text("Item Value (per 1 item)") },
+                        label = { Text("Item Value (per 1 item) *") },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue)
@@ -159,12 +167,72 @@ fun AddItemScreen(
                         value = expenseUiState.quantity,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = viewModel::updateQuantity,
-                        label = { Text("Item Quantity (per frequency period)") },
+                        label = {
+                            if (expenseUiState.buttonIndex == 0) {
+                                Text("Item Quantity (per frequency period) *")
+                            } else {
+                                Text("Item Quantity (not-applicable for incomes)")
+                            }
+                        },
                         maxLines = 1,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue),
                         enabled = (expenseUiState.buttonIndex == 0)
                     )
+                    //Frequency field
+                    OutlinedTextField(
+                        value = expenseUiState.frequency.toString(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(paddingValue),
+                        label = {
+                            if (expenseUiState.buttonIndex == 0) {
+                                Text("Item Frequency (buy [quantity] items every [frequency] days) *")
+                            } else {
+                                Text("Item Frequency (make [value] amount every [frequency] days) *")
+                            }
+                        },
+                        trailingIcon = {
+                            if (isFrequencyDropDownExpanded.value) {
+                                Icon(Icons.Filled.KeyboardArrowUp,
+                                    contentDescription = "description",
+                                    Modifier.clickable {
+                                        isFrequencyDropDownExpanded.value = !isFrequencyDropDownExpanded.value
+                                    }
+                                )
+                            } else {
+                                Icon(Icons.Filled.KeyboardArrowDown,
+                                    contentDescription = "description",
+                                    Modifier.clickable {
+                                        isFrequencyDropDownExpanded.value = !isFrequencyDropDownExpanded.value
+                                    }
+                                )
+                            }
+                        }
+                    )
+                    //Frequency dropdown menu
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.TopEnd)
+                    ) {
+                        DropdownMenu(
+                            expanded = isFrequencyDropDownExpanded.value,
+                            onDismissRequest = { isFrequencyDropDownExpanded.value = false },
+                            //modifier = Modifier.fillMaxWidth()
+                        ) {
+                            for (i in frequencyList.indices) {
+                                DropdownMenuItem(
+                                    text = { Text(frequencyList[i].first) },
+                                    onClick = {
+                                        isFrequencyDropDownExpanded.value = false
+                                        viewModel.updateFrequency(frequencyList[i].second)
+                                    }
+                                )
+                            }
+                        }
+                    }
                     //Category field
                     OutlinedTextField(
                         value = expenseUiState.category,
@@ -268,60 +336,7 @@ fun AddItemScreen(
                     }
 
 
-                    //Frequency field
-                    OutlinedTextField(
-                        value = expenseUiState.frequency.toString(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(paddingValue),
-                        label = {
-                            if (expenseUiState.buttonIndex == 0) {
-                                Text("Expense Frequency (buy [quantity] items every [frequency] days)")
-                            } else {
-                                Text("Income Frequency (make [value] amount every [frequency] days)")
-                            }
-                        },
-                        trailingIcon = {
-                            if (isFrequencyDropDownExpanded.value) {
-                                Icon(Icons.Filled.KeyboardArrowUp,
-                                    contentDescription = "description",
-                                    Modifier.clickable {
-                                        isFrequencyDropDownExpanded.value = !isFrequencyDropDownExpanded.value
-                                    }
-                                )
-                            } else {
-                                Icon(Icons.Filled.KeyboardArrowDown,
-                                    contentDescription = "description",
-                                    Modifier.clickable {
-                                        isFrequencyDropDownExpanded.value = !isFrequencyDropDownExpanded.value
-                                    }
-                                )
-                            }
-                        }
-                    )
-                    //Frequency dropdown menu
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentSize(Alignment.TopEnd)
-                    ) {
-                        DropdownMenu(
-                            expanded = isFrequencyDropDownExpanded.value,
-                            onDismissRequest = { isFrequencyDropDownExpanded.value = false },
-                            //modifier = Modifier.fillMaxWidth()
-                        ) {
-                            for (i in frequencyList.indices) {
-                                DropdownMenuItem(
-                                    text = { Text(frequencyList[i].first) },
-                                    onClick = {
-                                        isFrequencyDropDownExpanded.value = false
-                                        viewModel.updateFrequency(frequencyList[i].second)
-                                    }
-                                )
-                            }
-                        }
-                    }
+
                     //API ID checkbox and field
                     if (expenseUiState.buttonIndex == 0) {
                         Row (

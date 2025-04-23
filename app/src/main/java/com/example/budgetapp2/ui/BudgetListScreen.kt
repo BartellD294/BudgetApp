@@ -404,11 +404,6 @@ fun CategorySection(thisCategoryItemsList: List<BudgetItem>,
         if (isOpen) {
             SubcategoriesList(
                 thisCategoryItemsList
-                    .filter {if (expensesOrIncomes == 0) {
-                        it.expenseOrIncome == 0
-                    } else {
-                        it.expenseOrIncome == 1
-                    }}
                     .sortedBy { it.name }
                     .groupBy { it.subcategory }
                     .values
