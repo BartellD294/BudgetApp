@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
@@ -58,6 +59,11 @@ fun SettingsScreen() {
     Column(modifier = Modifier.fillMaxWidth()
         , horizontalAlignment = Alignment.CenterHorizontally) {
         ExportOrImportButton(viewModel)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            text = "Note: App will close and must be reopened after export or import."
+        )
         if (viewModel.optionsUiState.buttonIndex == 0) {
             ExportDestinationButton(viewModel, context)
             //StartExportButton(context)
