@@ -1,6 +1,6 @@
 [versions]
 activityComposeVersion = "1.10.1"
-agp = "8.8.1"
+agp = "8.9.2"
 converterKotlinxSerialization = "latest.version"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"

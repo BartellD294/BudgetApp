@@ -149,6 +149,7 @@ fun AddItemScreen(
                         onValueChange = viewModel::updateName,
                         label = { Text("Item Name *") },
                         maxLines = 1,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue)
                     )
@@ -159,6 +160,7 @@ fun AddItemScreen(
                         onValueChange = viewModel::updateValue,
                         label = { Text("Item Value (per 1 item) *") },
                         maxLines = 1,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue)
                     )
@@ -175,6 +177,7 @@ fun AddItemScreen(
                             }
                         },
                         maxLines = 1,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue),
                         enabled = (expenseUiState.buttonIndex == 0)
@@ -186,6 +189,8 @@ fun AddItemScreen(
                         onValueChange = { viewModel.updateFrequency(it.toIntOrNull() ?: 0) },
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue),
+                        maxLines = 1,
+                        singleLine = true,
                         label = {
                             if (expenseUiState.buttonIndex == 0) {
                                 Text("Item Frequency (buy [quantity] items every [frequency] days) *")
@@ -239,6 +244,7 @@ fun AddItemScreen(
                         onValueChange = viewModel::updateCategory,
                         label = { Text("Item Category") },
                         maxLines = 1,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue),
 
@@ -291,6 +297,7 @@ fun AddItemScreen(
                         onValueChange = viewModel::updateSubcategory,
                         label = { Text("Item Subcategory") },
                         maxLines = 1,
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                             .padding(paddingValue),
                         trailingIcon = {
@@ -364,6 +371,7 @@ fun AddItemScreen(
                                     .padding(paddingValue),
                                 label = { Text("API Key") },
                                 maxLines = 1,
+                                singleLine = true
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth()
@@ -441,6 +449,7 @@ fun ItemEntryBox(
         onValueChange = {onValueChange},
         label = { Text(label) },
         maxLines = 1,
+        singleLine = true,
         modifier = Modifier.padding(20.dp)
 
     )

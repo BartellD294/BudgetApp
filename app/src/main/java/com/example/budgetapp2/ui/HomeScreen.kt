@@ -181,18 +181,28 @@ fun ItemBarGraph(
                 //val thisHeight = ((homeUiState.expenseList[index].value / homeUiState.maxItemValue) * barGraphMaxHeight)
                 val thisHeight = ((homeUiState.expenseList[index].valuePerDay / homeUiState.maxExpenseDailyValue) * barGraphMaxHeight)
                 Column{
+                    //This first box is invisible and is just used to fill out the area above
+                    // the non-max-height bars. Otherwise, the graph's formatting can be broken.
+                    Box(modifier = Modifier
+                        .size(width = barGraphWidth.dp,
+                            height = (barGraphMaxHeight-thisHeight).dp
+                        )
+                        .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 0.dp)
+
+                    )
                     Box(modifier = Modifier
                         .size(
                             width = (barGraphWidth).dp,
                             height = thisHeight.dp
                         )
-                        .padding(4.dp)
+                        .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
                         .background(colors[index % colors.size])
                     ) {
 
                     }
                     Text(
-                        text = "[" + homeUiState.expenseList[index].id.toString() + "]",
+                        text = "[" + (index+1).toString() + "]",
+                        //text = "[" + homeUiState.expenseList[index].id.toString() + "]",
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         //textAlign = androidx.compose.ui.text.style.TextAlign.End
                     )
@@ -215,9 +225,11 @@ fun ItemBarGraph(
                 ) {
                     Text(
                         text = "■",
-                        color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size]
+                        color = colors[index % colors.size]
+                        //color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size]
                     )
-                    Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
+                    Text(text = "[" + (index+1).toString() +"]")
+                    //Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
                 }
                 Text(text = homeUiState.expenseList[index].name)
                 //if (homeUiState.totalOrWeekly == 0) {
@@ -285,11 +297,18 @@ fun CategoryBarGraph(
                 val thisHeight = ((homeUiState.expenseCategoryList[index].totalValuePerDay / homeUiState.maxTotalDailyCategoryValue) * barGraphMaxHeight)
                 Column{
                     Box(modifier = Modifier
+                        .size(width = barGraphWidth.dp,
+                            height = (barGraphMaxHeight-thisHeight).dp
+                        )
+                        .padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 0.dp)
+
+                    )
+                    Box(modifier = Modifier
                         .size(
                             width = (barGraphWidth).dp,
                             height = thisHeight.dp
                         )
-                        .padding(4.dp)
+                        .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
                         .background(colors[index % colors.size])
                     ) {
                         //Text(text = "[" + homeUiState.categoryList[index].toString() + "]",
@@ -465,43 +484,6 @@ val colors = listOf(
 
 /*
 
-fun incrementColors(num_elements: Int): List<Color> {
-    val colors = mutableListOf<Color>()
-    for (i in 0 until num_elements) {
-        val index = i/num_elements
-
-        val r = index *
-        colors.add(calculateColor(i, i, i))
-
-    }
-}
-
-
-r = 512
-g = 0           0
-b = 0
-
-r = 255
-g = 255         1
-b = -255
-
-r = 0
-g = 512         2
-b = 0
-
-r = -255
-g = 255         3
-b = 255
-
-r = 0
-g = 0           4
-b = 512
-
-r = 255
-g = -255        5
-b = 255
-*/
-
 fun calculateColor(r: Int, g: Int, b: Int): Color {
     return Color(r, g, b)
 }
@@ -511,3 +493,4 @@ fun calculateColor(r: Int, g: Int, b: Int): Color {
 fun HomeScreenPreview() {
     HomeScreen()
 }
+ */
