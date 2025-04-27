@@ -59,11 +59,11 @@ fun SettingsScreen() {
     Column(modifier = Modifier.fillMaxWidth()
         , horizontalAlignment = Alignment.CenterHorizontally) {
         ExportOrImportButton(viewModel)
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            text = "Note: App will close and must be reopened after export or import."
-        )
+//        Text(
+//            modifier = Modifier.fillMaxWidth(),
+//            textAlign = TextAlign.Center,
+//            text = "Note: App will close and must be reopened after export or import."
+//        )
         if (viewModel.optionsUiState.buttonIndex == 0) {
             ExportDestinationButton(viewModel, context)
             //StartExportButton(context)
@@ -102,7 +102,7 @@ fun ExportDestinationButton(viewModel: SettingsViewModel, context: Context) {
         exportLauncher.launch("exportname")
     })
     {
-        Text(text = "Select Export Destination")
+        Text(text = "Export Database")
     }
 }
 
@@ -124,7 +124,7 @@ fun ImportDestinationButton(viewModel: SettingsViewModel, context: Context) {
     Button(onClick = {
         importLauncher.launch(arrayOf("*/*"))
     }) {
-        Text(text = "Select Import Destination")
+        Text(text = "Select Import File")
     }
 }
 
@@ -148,7 +148,8 @@ fun StartImportButton(viewModel: SettingsViewModel, context: Context) {
                     text = "Are you sure you want to import?\n" +
                     "Importing a new database will overwrite the current database.\n" +
                     "It is recommended to backup your current database before importing." +
-                    "Upon import, the app will close and require a restart."
+                    "Upon import, the app will close and require a restart.\n" +
+                    "Never import a file that was not exported from this app."
                 )
                    },
             confirmButton = {

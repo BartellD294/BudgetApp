@@ -362,10 +362,13 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                 .aspectRatio(1f)
                 .padding(30.dp)
         ) {
-            for (item in homeUiState.expenseList) {
-                itemFraction = ((item.valuePerDay / homeUiState.totalExpensesDailyValue) * 360.0)
+            for (index: Int in 0 until homeUiState.expenseList.size) {
+            //for (item in homeUiState.expenseList) {
+                itemFraction = ((homeUiState.expenseList[index].valuePerDay / homeUiState.totalExpensesDailyValue) * 360.0)
+                //itemFraction = ((item.valuePerDay / homeUiState.totalExpensesDailyValue) * 360.0)
                 drawArc(
-                    color = colors[homeUiState.expenseList.indexOf(item) % colors.size],
+                    //color = colors[homeUiState.expenseList.indexOf(item) % colors.size],
+                    color = colors[index % colors.size],
                     startAngle = itemStartAngle.toFloat(),
                     sweepAngle = itemFraction.toFloat(),
                     useCenter = true,
@@ -387,9 +390,11 @@ fun ItemPieChart(homeUiState: HomeUiState) {
                     ) {
                         Text(
                             text = "■",
-                            color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size]
+                            color = colors[index % colors.size]
+                            //color = colors[homeUiState.expenseList.indexOf(homeUiState.expenseList[index]) % colors.size]
                         )
-                        Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
+                        Text(text = "[" + (index+1).toString() +"]")
+                        //Text(text = "[" + homeUiState.expenseList[index].id.toString() + "]")
                     }
                     Text(text = homeUiState.expenseList[index].name)
                     Text(text = valueToCurrency(homeUiState.expenseList[index].valuePerDay * 7.0))
