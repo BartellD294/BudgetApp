@@ -1,22 +1,14 @@
 package com.example.budgetapp2.ui
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.budgetapp2.BudgetApplication
 import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.Category
-
-import com.example.budgetapp2.data.OfflineBudgetItemsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(application: BudgetApplication): ViewModel() {

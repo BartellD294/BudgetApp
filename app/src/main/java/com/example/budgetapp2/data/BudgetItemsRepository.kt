@@ -1,6 +1,5 @@
 package com.example.budgetapp2.data
 
-import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 interface BudgetItemsRepository {

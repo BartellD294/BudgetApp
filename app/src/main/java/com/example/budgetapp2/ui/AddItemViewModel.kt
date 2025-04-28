@@ -1,12 +1,8 @@
 package com.example.budgetapp2.ui
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.util.query
 import com.example.budgetapp2.BudgetApplication
 import com.example.budgetapp2.data.BudgetItem
 import com.example.budgetapp2.data.Category
@@ -125,8 +121,8 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         updateValue(budgetItem.value.toString())
         updateQuantity(budgetItem.quantity.toString())
 
-        updateCategory(budgetItem.category.orEmpty())
-        updateSubcategory(budgetItem.subcategory.orEmpty())
+        updateCategory(budgetItem.category)//.orEmpty())
+        updateSubcategory(budgetItem.subcategory)//.orEmpty())
         updateFrequency(budgetItem.frequency.toInt())
         updateUseApiKey(budgetItem.seriesId != null)
         updateApiKey(budgetItem.seriesId ?: "")
@@ -135,7 +131,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         updateSubcategoryList(category.value)
     }
 
-    fun updateId(newId: Int)
+    private fun updateId(newId: Int)
         { id.value = newId}
     fun updateButton(newButtonIndex: Int)
         { buttonIndex.value = newButtonIndex }
@@ -152,17 +148,17 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         { subcategory.value = newSubcategory }
     fun updateFrequency(newFrequency: Int)
         { frequency.value = newFrequency }
-    fun updateUseApiKey(newUseApiKey: Boolean)
+    private fun updateUseApiKey(newUseApiKey: Boolean)
         { useApiKey.value = newUseApiKey }
     fun updateApiKey(newApiKey: String)
         { apiKey.value = newApiKey }
 
-    fun updateCategoryList(newCategoryList: List<Category>)
+    private fun updateCategoryList(newCategoryList: List<Category>)
         { categoryList.value = newCategoryList
             updateSubcategoryList(category.value)
     }
 
-    fun updateSubcategoryList(category: String) {
+    private fun updateSubcategoryList(category: String) {
         val newSubcategoryList = mutableListOf<Subcategory>()
         for (i in categoryList.value.indices) {
             if (categoryList.value[i].name == category) {
@@ -232,17 +228,17 @@ fun ExpenseUiState.toExpense(): BudgetItem {
     )
 }
 
-fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseUiState(
-    buttonIndex = buttonIndex,
-    id = id,
-    name = name,
-    value = value.toString(),
-    quantity = quantity.toString(),
-    frequency = frequency.toInt(),
-    //Note to self, String?.orEmpty = normal string if not null
-    // or "" if null
-    category = category.orEmpty(),
-    useApiKey = seriesId != null,
-    apiKey = seriesId ?: ""
-
-)
+//fun BudgetItem.toExpenseUiState(buttonIndex: Int = 0): ExpenseUiState = ExpenseUiState(
+//    buttonIndex = buttonIndex,
+//    id = id,
+//    name = name,
+//    value = value.toString(),
+//    quantity = quantity.toString(),
+//    frequency = frequency.toInt(),
+//    //Note to self, String?.orEmpty = normal string if not null
+//    // or "" if null
+//    category = category.orEmpty(),
+//    useApiKey = seriesId != null,
+//    apiKey = seriesId ?: ""
+//
+//)

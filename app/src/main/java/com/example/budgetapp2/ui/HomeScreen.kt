@@ -1,51 +1,44 @@
 package com.example.budgetapp2.ui
 
-import android.util.Log
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.VerticalDivider
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgetapp2.data.valueToCurrency
 
-val barGraphWidth = 50
-val barGraphMaxHeight = 300
+const val barGraphWidth = 50
+const val barGraphMaxHeight = 300
 
 @Composable
 fun HomeScreen(
@@ -351,7 +344,7 @@ fun CategoryBarGraph(
 fun ItemPieChart(homeUiState: HomeUiState) {
     var itemIndex = 0
     var itemStartAngle = 0.0
-    var itemFraction = 0.0
+    var itemFraction: Double
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -408,7 +401,7 @@ fun ItemPieChart(homeUiState: HomeUiState) {
 fun CategoryPieChart(homeUiState: HomeUiState) {
     var categoryIndex = 0
     var categoryStartAngle = 0.0
-    var categoryFraction = 0.0
+    var categoryFraction: Double
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -457,20 +450,20 @@ fun CategoryPieChart(homeUiState: HomeUiState) {
     }
 }
 
-val saturatedColors = listOf(
-    Color(0xFFFF4040),
-    Color(0xFFFFA040),
-    Color(0xFFffff40),
-    Color(0xFFA0FF40),
-    Color(0xFF40ff40),
-    Color(0xFF40FFA0),
-    Color(0xFF40FFFF),
-    Color(0xFF40A0FF),
-    Color(0xFF4040FF),
-    Color(0xFFA040FF),
-    Color(0xFFFF40FF),
-    Color(0xFFFF40A0),
-)
+//val saturatedColors = listOf(
+//    Color(0xFFFF4040),
+//    Color(0xFFFFA040),
+//    Color(0xFFffff40),
+//    Color(0xFFA0FF40),
+//    Color(0xFF40ff40),
+//    Color(0xFF40FFA0),
+//    Color(0xFF40FFFF),
+//    Color(0xFF40A0FF),
+//    Color(0xFF4040FF),
+//    Color(0xFFA040FF),
+//    Color(0xFFFF40FF),
+//    Color(0xFFFF40A0),
+//)
 
 val colors = listOf(
     Color(0xFFFF8080),

@@ -9,10 +9,10 @@ import com.example.budgetapp2.ui.theme.BudgetApp2Theme
 
 
 sealed class Screen(val route: String, val title: String) {
-    object Home: Screen("home", "Home")
-    object BudgetList: Screen("budgetList", "Budget List")
-    object AddItem: Screen("addItem", "Add Item")
-    object Settings: Screen("settings", "Settings")
+    data object Home: Screen("home", "Home")
+    data object BudgetList: Screen("budgetList", "Budget List")
+    data object AddItem: Screen("addItem", "Add Item")
+    data object Settings: Screen("settings", "Settings")
 }
 
 

@@ -87,18 +87,18 @@ class OfflineBudgetItemsRepository(
 
     override fun getMaxTotalCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome).map { categoryList ->
-            categoryList.map { category ->
+            categoryList.maxOfOrNull { category ->
                 budgetItemDao.getTotalCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                     .first()
-            }.maxOrNull() ?: 0.0
+            } ?: 0.0
         }
 
     override fun getMaxTotalDailyCategoryValueExpenseOrIncome(expenseOrIncome: Int): Flow<Double> =
         budgetItemDao.getAllExpenseOrIncomeCategoryNames(expenseOrIncome).map { categoryList ->
-            categoryList.map { category ->
+            categoryList.maxOfOrNull { category ->
                 budgetItemDao.getTotalDailyCategoryValueExpensesOrIncomes(category, expenseOrIncome)
                     .first()
-            }.maxOrNull() ?: 0.0
+            } ?: 0.0
         }
 
     override suspend fun updateItemsWithApiIds() {

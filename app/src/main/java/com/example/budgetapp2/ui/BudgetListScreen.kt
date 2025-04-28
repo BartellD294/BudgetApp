@@ -98,11 +98,11 @@ fun ListHeader(
     viewModel: BudgetListViewModel
 ) {
     //var expanded by remember { mutableStateOf(false) }
-    var sortExpanded = remember { mutableStateOf(false) }
-    var filterExpanded = remember { mutableStateOf(false) }
+    val sortExpanded = remember { mutableStateOf(false) }
+    val filterExpanded = remember { mutableStateOf(false) }
 
     //var sortBy by remember { mutableStateOf("Name (A-Z)") }
-    var sortBy = remember { mutableStateOf("Name (A-Z)") }
+    val sortBy = remember { mutableStateOf("Name (A-Z)") }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -373,7 +373,7 @@ fun CategoriesList(listByCategory: List<List<BudgetItem>>,
         items(listByCategory.size) { index ->
             CategorySection(
                 listByCategory[index],
-                listByCategory[index][0].category.toString(),
+                listByCategory[index][0].category,//.toString(),
                 navController,
                 viewModel,
                 budgetListUiState
@@ -427,7 +427,7 @@ fun SubcategoriesList(
     for (i in subcategoriesList.indices) {
         SubcategorySection(
             subcategoriesList[i],
-            subcategoriesList[i][0].subcategory.toString(),
+            subcategoriesList[i][0].subcategory,//.toString(),
             navController,
             viewModel,
             budgetListUiState

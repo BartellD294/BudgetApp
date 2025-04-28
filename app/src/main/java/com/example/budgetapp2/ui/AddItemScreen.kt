@@ -43,7 +43,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.budgetapp2.data.Subcategory
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -70,7 +69,7 @@ fun AddItemScreen(
     val isFrequencyDropDownExpanded = remember { mutableStateOf(false) }
     val isCategoryDropDownExpanded = remember { mutableStateOf(false) }
     val isSubcategoryDropDownExpanded = remember { mutableStateOf(false) }
-    val subcategoryList = remember { mutableStateOf(listOf<Subcategory>()) }
+    //val subcategoryList = remember { mutableStateOf(listOf<Subcategory>()) }
 
 
     Scaffold(
@@ -155,7 +154,7 @@ fun AddItemScreen(
                     )
                     //Value field
                     OutlinedTextField(
-                        value = expenseUiState.value.toString(),
+                        value = expenseUiState.value,//.toString(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = viewModel::updateValue,
                         label = { Text("Item Value (per 1 item) *") },
@@ -437,23 +436,23 @@ val frequencyList = listOf(
     Pair("Yearly", 365)
 )
 
-@Composable
-fun ItemEntryBox(
-    label: String,
-    expenseUiState: ExpenseUiState,
-    onValueChange: (ExpenseUiState) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    OutlinedTextField(
-        value = expenseUiState.name,
-        onValueChange = {onValueChange},
-        label = { Text(label) },
-        maxLines = 1,
-        singleLine = true,
-        modifier = Modifier.padding(20.dp)
-
-    )
-}
+//@Composable
+//fun ItemEntryBox(
+//    label: String,
+//    expenseUiState: ExpenseUiState,
+//    onValueChange: (ExpenseUiState) -> Unit,
+//    modifier: Modifier = Modifier
+//) {
+//    OutlinedTextField(
+//        value = expenseUiState.name,
+//        onValueChange = {onValueChange},
+//        label = { Text(label) },
+//        maxLines = 1,
+//        singleLine = true,
+//        modifier = Modifier.padding(20.dp)
+//
+//    )
+//}
 
 /*
 @Preview(showBackground = true)
