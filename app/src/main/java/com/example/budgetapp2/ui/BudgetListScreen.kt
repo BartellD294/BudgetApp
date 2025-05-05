@@ -285,25 +285,28 @@ fun FilterButton(
                 onDismissRequest = { expanded.value = false },
                 modifier = Modifier
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("Quantity")
-                            Checkbox(
-                                checked = budgetListUiState.showQuantity,
-                                onCheckedChange = {
-                                    viewModel.updateShowQuantity(it)
-                                }
-                            )
+                if (budgetListUiState.expensesOrIncomes == 0) {
+                    DropdownMenuItem(
+                        text = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("Quantity")
+                                Checkbox(
+                                    checked = budgetListUiState.showQuantity,
+                                    onCheckedChange = {
+                                        viewModel.updateShowQuantity(it)
+                                    }
+                                )
+                            }
+                        },
+                        onClick = {
+                            viewModel.updateShowQuantity(!budgetListUiState.showQuantity)
                         }
-                    },
-                    onClick = {
-                        viewModel.updateShowQuantity(!budgetListUiState.showQuantity)
-                    }
-                )
+                    )
+                }
+
                 DropdownMenuItem(
                     text = {
                         Row(
