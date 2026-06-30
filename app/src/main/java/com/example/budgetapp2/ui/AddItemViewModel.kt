@@ -52,12 +52,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
 
     var expenseUiState: StateFlow<ExpenseUiState> =
         combine(
-            combine(
-                id,
-                buttonIndex,
-                name,
-                value,
-                quantity
+            combine(id, buttonIndex,name,value,quantity
             ) { id,
                 buttonIndex,
                 name,
@@ -119,7 +114,7 @@ class AddItemViewModel(private val application: BudgetApplication): ViewModel() 
         updateButton(budgetItem.expenseOrIncome)
         updateName(budgetItem.name)
         updateValue(budgetItem.value.toString())
-        updateQuantity(budgetItem.quantity.toString())
+        updateQuantity(budgetItem.quantity?.toString() ?: "")
 
         updateCategory(budgetItem.category)//.orEmpty())
         updateSubcategory(budgetItem.subcategory)//.orEmpty())
@@ -213,7 +208,7 @@ fun ExpenseUiState.toExpense(): BudgetItem {
         quantity = if (quantity == "") {
             null
         } else {
-            quantity.toDouble()
+            quantity.toDoubleOrNull()
         },
         category = category.ifEmpty { "Uncategorized" },
         subcategory = subcategory.ifEmpty { "No subcategory" },
